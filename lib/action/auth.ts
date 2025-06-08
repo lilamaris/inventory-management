@@ -9,7 +9,7 @@ import {
     SignUpCredentialsState,
 } from '@/lib/definition/auth'
 import { AuthError } from 'next-auth'
-import { isExistingUser } from '../service/uesr'
+import { isExistingUser } from '../service/user'
 import bcrypt from 'bcrypt'
 import { prisma } from '../prisma'
 
@@ -70,7 +70,10 @@ export const signUpCredentialsAction = async (state: SignUpCredentialsState, for
         }
 
     if (await isExistingUser(formData.get('email') as string)) {
-        return { errors: { email: ['Email already exists'] }, payload: { name: formDataEntries.name, email: formDataEntries.email } }
+        return {
+            errors: { email: ['Email already exists'] },
+            payload: { name: formDataEntries.name, email: formDataEntries.email },
+        }
     }
 
     const { name, email, password } = validatedFields.data

@@ -7,7 +7,7 @@ import { Role } from '@prisma/client'
 import { prisma } from './prisma'
 import { compare } from 'bcrypt'
 import { PrismaAdapter } from '@auth/prisma-adapter'
-import { getUserAuthByEmail, isExistingUser } from './service/uesr'
+import { getUserAuthByEmail, isExistingUser } from './service/user'
 
 declare module 'next-auth' {
     interface Session {
