@@ -1,11 +1,7 @@
 import { AppSidebar, SidebarGroupItem } from '@/components/layout/app-sidebar'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
-import { auth } from '@/lib/auth'
 import {
-    Box,
-    Boxes,
     ChartLine,
-    Group,
     Layers,
     Package,
     PackageCheck,
@@ -13,7 +9,6 @@ import {
     Shield,
     ShoppingBag,
     ShoppingCart,
-    TrendingUp,
     Users,
 } from 'lucide-react'
 
