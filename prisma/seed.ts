@@ -1,6 +1,54 @@
-import { PrismaClient, Prisma } from '@prisma/client'
+import { PrismaClient, Prisma, Category, User } from '@prisma/client'
 
 const prisma = new PrismaClient()
+
+const categoryData = [
+    { name: 'Electronics', description: 'Electronics category' },
+    { name: 'Furniture', description: 'Furniture category' },
+]
+const itemData = [
+    [
+        'Laptop',
+        'Keyboard',
+        'Mouse',
+        'Monitor',
+        'Speaker',
+        'Headphone',
+        'Printer',
+        'Scanner',
+        'Fax Machine',
+        'Smartphone',
+        'Tablet',
+        'Camera',
+        'Audio System',
+        'Video System',
+        'Gaming Console',
+        'Smart Watch',
+        'Smart TV',
+        'Smart Home',
+        'Smart Light',
+        'Smart Lock',
+        'Smart Thermostat',
+        'Smart Speaker',
+        'Smart Doorbell',
+        'Smart Security Camera',
+        'Smart Door Lock',
+    ],
+    [
+        'Office Chair',
+        'Desk',
+        'Table',
+        'Sofa',
+        'Dining Table',
+        'Dining Chair',
+        'Wardrobe',
+        'Bed',
+        'Nightstand',
+        'Dressing Table',
+        'Mirror',
+        'Lamp',
+    ],
+]
 
 const permissionData: Prisma.PermissionCreateInput[] = [
     {
@@ -84,17 +132,33 @@ const roleData: Prisma.RoleCreateInput[] = [
     },
 ]
 
+const buildItemData = (category: Category, itemName: string) => {
+    const quantity = Math.floor(Math.random() * 100) + 1
+    const data = {
+        name: itemName,
+        sku: `${category.name.toUpperCase()}-${itemName.toUpperCase()}`,
+        description: `This item is a ${itemName}`,
+        quantity,
+        categoryId: category.id,
+        createdById: '',
+    }
+
+    return data
+}
+
 const seed = async () => {
     console.info('Cleaning up database...')
+    await prisma.rolePermission.deleteMany()
     await prisma.permission.deleteMany()
     await prisma.role.deleteMany()
-    await prisma.user.deleteMany()
+    await prisma.inventoryItem.deleteMany()
+    await prisma.category.deleteMany()
 
     console.info('Creating permissions...')
-    const count = await prisma.permission.createMany({
+    await prisma.permission.createMany({
         data: permissionData,
     })
-    console.info(`Created ${count} permissions`)
+    console.info(`Created permissions`)
 
     console.info('Creating roles...')
     for (const role of roleData) {
@@ -120,6 +184,23 @@ const seed = async () => {
         })),
     })
     console.info(`Created ${adminPermission.count} admin permissions`)
+
+    console.info('Creating categories...')
+    await prisma.category.createMany({ data: categoryData })
+    console.info(`Created categories`)
+
+    console.info('Creating items...')
+    const categories = await prisma.category.findMany()
+    categories.forEach(async (category, index) => {
+        const categoryItems = itemData[index]
+        console.info(`Create ${category.name} items (target: ${categoryItems.length})`)
+        for (const item of categoryItems) {
+            const data = buildItemData(category, item)
+            await prisma.inventoryItem.create({ data })
+            console.info(`Created item: ${data.name} (${data.sku})`)
+        }
+        console.info(`Created ${categoryItems.length} items for category ${category.name}`)
+    })
 }
 
 seed()
