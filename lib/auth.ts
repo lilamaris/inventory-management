@@ -1,21 +1,67 @@
-import NextAuth, { DefaultSession, NextAuthConfig } from 'next-auth'
-import Github from 'next-auth/providers/github'
-import Credentials from 'next-auth/providers/credentials'
-import type { Provider } from 'next-auth/providers'
+import 'server-only'
 
-import { Role } from '@prisma/client'
+import { JWT } from 'next-auth/jwt'
+import NextAuth, { DefaultSession, NextAuthConfig, User } from 'next-auth'
+import type { Provider } from 'next-auth/providers'
+import Credentials from 'next-auth/providers/credentials'
+import Github from 'next-auth/providers/github'
+import { PrismaAdapter } from '@auth/prisma-adapter'
+
+import { type Role } from '@prisma/client'
 import { prisma } from './prisma'
 import { compare } from 'bcrypt'
-import { PrismaAdapter } from '@auth/prisma-adapter'
-import { getUserAuthByEmail, isExistingUser } from './service/user'
+
+import { getUserAuthByEmail } from './service/user'
+
+declare module 'next-auth/jwt' {
+    interface JWT {
+        role: string
+    }
+}
 
 declare module 'next-auth' {
+    interface User {
+        roleId: string | null
+    }
     interface Session {
         user: {
-            role?: Role
+            role: string
         } & DefaultSession['user']
     }
 }
+
+export const verifyPermission = async (
+    requestPerm: { domain?: string; resource: string; action: string },
+    userRole: Role,
+) => {
+    const userRolePermissions = await prisma.rolePermission.findMany({
+        where: { roleId: userRole.id },
+        include: { permission: true },
+    })
+
+    const userPermissions = userRolePermissions.map((rolePermission) => rolePermission.permission)
+
+    const hasPermission = userPermissions.some(
+        (permission) =>
+            permission.resource === requestPerm.resource &&
+            permission.action === requestPerm.action &&
+            (permission.domain === requestPerm.domain || !requestPerm.domain),
+    )
+
+    return hasPermission
+}
+
+const GithubProvider = Github({
+    profile: async (profile): Promise<User> => {
+        return {
+            id: String(profile.id),
+            name: profile.name,
+            email: profile.email,
+            image: profile.avatar_url,
+            roleId: null,
+        }
+    },
+})
 
 const CredentialsProvider = Credentials({
     id: 'credentials',
@@ -34,27 +80,50 @@ const CredentialsProvider = Credentials({
             id: user.id,
             name: user.name,
             email: user.email,
-            role: user.Role,
+            roleId: user.roleId,
         }
     },
 })
 
-const providers: Provider[] = [CredentialsProvider, Github]
+const providers: Provider[] = [CredentialsProvider, GithubProvider]
 const authOptions: NextAuthConfig = {
     adapter: PrismaAdapter(prisma),
     session: { strategy: 'jwt' },
     providers,
     callbacks: {
-        async jwt({ token, user }) {
-            if (user) token.id = user.id
-            return token
+        authorized: async ({ auth, request }) => {
+            return true
         },
-        async session({ session, token }) {
-            session.user = {
-                ...session.user,
-                id: token.id as string,
+        jwt: async ({ token, user, trigger }) => {
+            if (trigger === 'signUp') {
+                console.log('signUp trigger', token, user)
+                if (!user) {
+                    throw new Error('User not found while signUp Trigger.. fcking hate authjs')
+                }
+                const { id } = user as User
+                const role = await prisma.role.findUnique({ where: { name: 'Employee' } })
+                if (!role) return token
+                await prisma.user.update({ where: { id }, data: { roleId: role.id } })
+                token.role = role.name
+                return token
             }
 
+            if (trigger === 'signIn') {
+                console.log('signIn trigger', token, user)
+                if (!user) {
+                    throw new Error('User not found while signUp Trigger.. fcking hate authjs')
+                }
+                const { id } = user as User
+                const role = await prisma.role.findUnique({ where: { name: 'Employee' } })
+                if (!role) return token
+                await prisma.user.update({ where: { id }, data: { roleId: role.id } })
+                token.role = role.name
+            }
+
+            return token
+        },
+        session: async ({ session, token }) => {
+            session.user.role = token.role
             return session
         },
     },

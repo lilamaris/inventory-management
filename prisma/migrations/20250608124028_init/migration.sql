@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "Action" AS ENUM ('VIEW', 'CREATE', 'UPDATE', 'DELETE');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
@@ -65,7 +68,9 @@ CREATE TABLE "Role" (
 -- CreateTable
 CREATE TABLE "Permission" (
     "id" TEXT NOT NULL,
-    "action" TEXT NOT NULL,
+    "domain" TEXT,
+    "resource" TEXT NOT NULL,
+    "action" "Action" NOT NULL,
     "description" TEXT,
 
     CONSTRAINT "Permission_pkey" PRIMARY KEY ("id")
@@ -124,9 +129,6 @@ CREATE UNIQUE INDEX "Session_sessionToken_key" ON "Session"("sessionToken");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Role_name_key" ON "Role"("name");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Permission_action_key" ON "Permission"("action");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "RolePermission_roleId_permissionId_key" ON "RolePermission"("roleId", "permissionId");

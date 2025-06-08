@@ -77,12 +77,14 @@ export const signUpCredentialsAction = async (state: SignUpCredentialsState, for
     }
 
     const { name, email, password } = validatedFields.data
+    const role = await prisma.role.findUnique({ where: { name: 'Employee' } })
 
     const passwordHash = await bcrypt.hash(password, 10)
     const userData = {
         name,
         email,
         passwordHash,
+        roleId: role?.id,
     }
 
     try {

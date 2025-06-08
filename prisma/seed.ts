@@ -1,4 +1,5 @@
 import { PrismaClient, Prisma, Category, User } from '@prisma/client'
+import { hash } from 'bcrypt'
 
 const prisma = new PrismaClient()
 
@@ -52,68 +53,64 @@ const itemData = [
 
 const permissionData: Prisma.PermissionCreateInput[] = [
     {
-        action: 'users:create',
+        resource: 'user',
+        action: 'CREATE' as const,
         description: 'Create users',
     },
     {
-        action: 'users:read',
+        resource: 'user',
+        action: 'VIEW',
         description: 'Read users',
     },
     {
-        action: 'users:update',
+        resource: 'user',
+        action: 'UPDATE',
         description: 'Update users',
     },
     {
-        action: 'users:delete',
+        resource: 'user',
+        action: 'DELETE',
         description: 'Delete users',
     },
     {
-        action: 'role.create',
+        resource: 'role',
+        action: 'CREATE',
         description: 'Create roles',
     },
     {
-        action: 'role.read',
+        resource: 'role',
+        action: 'VIEW',
         description: 'Read roles',
     },
     {
-        action: 'role.update',
+        resource: 'role',
+        action: 'UPDATE',
         description: 'Update roles',
     },
     {
-        action: 'role.delete',
+        resource: 'role',
+        action: 'DELETE',
         description: 'Delete roles',
     },
     {
-        action: 'permission.create',
+        resource: 'permission',
+        action: 'CREATE',
         description: 'Create permissions',
     },
     {
-        action: 'permission.read',
+        resource: 'permission',
+        action: 'VIEW',
         description: 'Read permissions',
     },
     {
-        action: 'permission.update',
+        resource: 'permission',
+        action: 'UPDATE',
         description: 'Update permissions',
     },
     {
-        action: 'permission.delete',
+        resource: 'permission',
+        action: 'DELETE',
         description: 'Delete permissions',
-    },
-    {
-        action: 'permission.assign',
-        description: 'Assign permissions to roles',
-    },
-    {
-        action: 'permission.withhold',
-        description: 'Withhold permissions from roles',
-    },
-    {
-        action: 'role.assign',
-        description: 'Assign roles to users',
-    },
-    {
-        action: 'role.withhold',
-        description: 'Withhold roles from users',
     },
 ]
 
@@ -132,7 +129,7 @@ const roleData: Prisma.RoleCreateInput[] = [
     },
 ]
 
-const buildItemData = (category: Category, itemName: string) => {
+const buildItemData = (category: Category, createdBy: User, itemName: string) => {
     const quantity = Math.floor(Math.random() * 100) + 1
     const data = {
         name: itemName,
@@ -140,7 +137,7 @@ const buildItemData = (category: Category, itemName: string) => {
         description: `This item is a ${itemName}`,
         quantity,
         categoryId: category.id,
-        createdById: '',
+        createdById: createdBy.id,
     }
 
     return data
@@ -185,6 +182,21 @@ const seed = async () => {
     })
     console.info(`Created ${adminPermission.count} admin permissions`)
 
+    console.info('Create system user')
+    const systemUser = await prisma.user.create({
+        data: {
+            email: 'system@example.com',
+            name: 'System',
+            passwordHash: await hash('system', 10),
+            Role: {
+                connect: {
+                    name: 'Admin',
+                },
+            },
+        },
+    })
+    console.info(`Created system user: ${systemUser.name}`)
+
     console.info('Creating categories...')
     await prisma.category.createMany({ data: categoryData })
     console.info(`Created categories`)
@@ -195,7 +207,7 @@ const seed = async () => {
         const categoryItems = itemData[index]
         console.info(`Create ${category.name} items (target: ${categoryItems.length})`)
         for (const item of categoryItems) {
-            const data = buildItemData(category, item)
+            const data = buildItemData(category, systemUser, item)
             await prisma.inventoryItem.create({ data })
             console.info(`Created item: ${data.name} (${data.sku})`)
         }

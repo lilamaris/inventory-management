@@ -79,9 +79,18 @@ model Role {
   users       User[]
 }
 
+enum Action {
+  VIEW
+  CREATE
+  UPDATE
+  DELETE
+}
+
 model Permission {
   id          String           @id @default(uuid())
-  action      String           @unique
+  domain      String?
+  resource    String
+  action      Action
   description String?
   roles       RolePermission[]
 }
