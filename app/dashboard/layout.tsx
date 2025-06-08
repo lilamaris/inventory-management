@@ -91,7 +91,7 @@ const groups: SidebarGroupItem[] = [
     },
 ]
 
-const Layout = async ({ children }: { children: React.ReactNode }) => {
+export default async function Layout({ children }: { children: React.ReactNode }) {
     return (
         <SidebarProvider>
             <AppSidebar groups={groups} variant="floating" />
@@ -101,5 +101,3 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
         </SidebarProvider>
     )
 }
-
-export default Layout
