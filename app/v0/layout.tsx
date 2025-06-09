@@ -9,7 +9,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
             <SidebarInset>
                 <main className="flex flex-1 flex-col">
                     <AppHeader />
-                    <div className="flex flex-1 flex-col">{children}</div>
+                    <div className="flex flex-1 flex-col p-4">{children}</div>
                 </main>
             </SidebarInset>
         </SidebarProvider>
