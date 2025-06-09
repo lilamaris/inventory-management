@@ -10,7 +10,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
             <SidebarInset className="h-screen md:h-[calc(100vh-1rem)]">
                 <AppHeader className="sticky top-0 z-10" />
                 <div className="@container/main p-4 overflow-y-auto flex-1">{children}</div>
-                <AppFooter className="sticky bottom-0 z-10 border border-red-500" />
+                <AppFooter className="sticky bottom-0 z-10" />
             </SidebarInset>
         </SidebarProvider>
     )
