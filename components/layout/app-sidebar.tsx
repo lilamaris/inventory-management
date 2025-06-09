@@ -3,63 +3,65 @@ import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
-    SidebarGroup,
-    SidebarGroupContent,
-    SidebarGroupLabel,
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarMenuSub,
 } from '@/components/ui/sidebar'
 import Link from 'next/link'
-import { GalleryVerticalEnd, LogOut } from 'lucide-react'
+import { GalleryVerticalEnd, LogOut, Minus, Plus } from 'lucide-react'
 import { auth } from '@/lib/auth'
-import { RouteMeta } from '@/lib/definition/appmeta'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@radix-ui/react-collapsible'
+import { cn } from '@/lib/utils'
 
-export interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-    navigations: RouteMeta[]
-}
+import { routeTree, RouteNode } from '@/lib/definition/appmeta'
 
-const renderSingleItem = (route: RouteMeta, depth: number) => {
-    return (
-        <SidebarMenuItem key={route.label}>
-            <SidebarMenuButton asChild>
-                <Link href={route.id} style={depth > 0 ? { paddingLeft: `${depth * 12}px` } : {}}>
-                    {route.icon && React.createElement(route.icon, { className: 'size-4' })}
-                    {route.label}
-                </Link>
-            </SidebarMenuButton>
-        </SidebarMenuItem>
-    )
-}
-const renderSidebarGroup = (route: RouteMeta & { subRoutes?: RouteMeta[] }, depth = 0) => {
-    const { id, label, subRoutes = [] } = route
-
-    const subRoutesHrefMutated = subRoutes.map((subRoute) => ({ ...subRoute, id: `${id}/${subRoute.id}` }))
-
-    if (!subRoutes || subRoutes.length === 0) {
-        return depth === 0 ? (
-            <SidebarGroup key={id}>
-                <SidebarMenu>{renderSingleItem(route, depth)}</SidebarMenu>
-            </SidebarGroup>
-        ) : (
-            renderSingleItem(route, depth)
+function renderRoute(route: RouteNode) {
+    if (route.subRoutes) {
+        return (
+            <SidebarMenu key={route.id}>
+                <Collapsible className="group/collapsible" defaultOpen={true}>
+                    <SidebarMenuItem>
+                        <CollapsibleTrigger asChild>
+                            <SidebarMenuButton>
+                                {route.icon && React.createElement(route.icon, { className: 'size-4' })}
+                                {route.label}
+                                <Plus className="ml-auto group-data-[state=open]/collapsible:hidden" />
+                                <Minus className="ml-auto group-data-[state=closed]/collapsible:hidden" />
+                            </SidebarMenuButton>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent
+                            className={cn(
+                                'text-popover-foreground outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+                            )}
+                        >
+                            <SidebarMenuSub>
+                                {route.subRoutes.map((subRoute) => (
+                                    <SidebarMenuItem key={subRoute.id}>{renderRoute(subRoute)}</SidebarMenuItem>
+                                ))}
+                            </SidebarMenuSub>
+                        </CollapsibleContent>
+                    </SidebarMenuItem>
+                </Collapsible>
+            </SidebarMenu>
         )
     }
-
     return (
-        <SidebarGroup key={id}>
-            <SidebarGroupLabel>{label}</SidebarGroupLabel>
-            <SidebarGroupContent>
-                <SidebarMenu>
-                    {subRoutesHrefMutated.map((subRoute) => renderSidebarGroup(subRoute, depth + 1))}
-                </SidebarMenu>
-            </SidebarGroupContent>
-        </SidebarGroup>
+        <SidebarMenuButton asChild>
+            <Link href={route.href ?? '#'}>
+                {route.icon && React.createElement(route.icon, { className: 'size-4' })}
+                {route.label}
+            </Link>
+        </SidebarMenuButton>
     )
 }
 
-export async function AppSidebar({ navigations = [], ...props }: AppSidebarProps) {
+function renderRouteTree(routeTree: RouteNode[]) {
+    return routeTree.map((route) => renderRoute(route))
+}
+
+export async function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const session = await auth()
 
     return (
@@ -68,7 +70,7 @@ export async function AppSidebar({ navigations = [], ...props }: AppSidebarProps
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href="/dashboard">
+                            <Link href="/">
                                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square items-center rounded-lg size-8 justify-center">
                                     <GalleryVerticalEnd className="size-4" />
                                 </div>
@@ -81,7 +83,7 @@ export async function AppSidebar({ navigations = [], ...props }: AppSidebarProps
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
-            <SidebarContent>{navigations.map((navigation) => renderSidebarGroup(navigation))}</SidebarContent>
+            <SidebarContent>{renderRouteTree(routeTree)}</SidebarContent>
             <SidebarFooter>
                 <SidebarMenu>
                     <SidebarMenuItem>
