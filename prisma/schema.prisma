@@ -116,7 +116,7 @@ model InventoryItem {
   createdById  String
   createdBy    User                   @relation(fields: [createdById], references: [id])
   createdAt    DateTime               @default(now())
-  updatedAT    DateTime               @updatedAt
+  updatedAt    DateTime               @updatedAt
   transactions InventoryTransaction[]
 }
 

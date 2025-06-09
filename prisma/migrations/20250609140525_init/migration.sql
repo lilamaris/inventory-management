@@ -95,7 +95,7 @@ CREATE TABLE "InventoryItem" (
     "categoryId" TEXT,
     "createdById" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAT" TIMESTAMP(3) NOT NULL,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "InventoryItem_pkey" PRIMARY KEY ("id")
 );
