@@ -12,7 +12,7 @@ import {
     SidebarMenuSub,
 } from '@/components/ui/sidebar'
 import Link from 'next/link'
-import { ChevronDown, ChevronRight, GalleryVerticalEnd, LogOut, Minus, Plus } from 'lucide-react'
+import { ChevronRight, GalleryVerticalEnd, LogOut, Minus, Plus } from 'lucide-react'
 import { auth } from '@/lib/auth'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@radix-ui/react-collapsible'
 import { cn } from '@/lib/utils'
@@ -160,14 +160,6 @@ export async function AppSidebar({ ...props }: React.ComponentProps<typeof Sideb
                                     <span className="font-medium">{session?.user?.name}</span>
                                     <span className="text-muted-foreground">{session?.user?.email}</span>
                                 </div>
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton asChild>
-                            <Link href="/auth/signout">
-                                <LogOut className="size-4" />
-                                Logout
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>

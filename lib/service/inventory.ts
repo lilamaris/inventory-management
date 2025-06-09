@@ -1,16 +1,26 @@
 import { prisma } from '@/lib/prisma'
-import type { InventoryItem, Prisma } from '@prisma/client'
+import type { Prisma } from '@prisma/client'
 
 export interface GetInventoryItemsParams {
     page?: number
     limit?: number
     search?: string
     categoryId?: string
+    createdById?: string
     orderBy?: Prisma.InventoryItemOrderByWithRelationInput
 }
-export const getInventoryItems = async (params?: GetInventoryItemsParams): Promise<InventoryItem[]> => {
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    const { page = 1, limit = 10, search = '', categoryId, orderBy } = params || {}
+export const getInventoryItems = async (
+    params?: GetInventoryItemsParams,
+): Promise<
+    Prisma.InventoryItemGetPayload<{
+        include: {
+            category: { select: { id: true; name: true; description: true } }
+            createdBy: { select: { id: true; name: true; email: true; image: true } }
+        }
+    }>[]
+> => {
+    await new Promise((resolve) => setTimeout(resolve, 3000))
+    const { page = 1, limit = 10, search = '', categoryId, createdById, orderBy } = params || {}
 
     const searchQuery = search
         ? {
@@ -24,9 +34,19 @@ export const getInventoryItems = async (params?: GetInventoryItemsParams): Promi
     const where: Prisma.InventoryItemWhereInput = {
         ...searchQuery,
         ...(categoryId ? { category: { id: categoryId } } : {}),
+        ...(createdById ? { createdById } : {}),
     }
 
-    const items = await prisma.inventoryItem.findMany({ where, skip: (page - 1) * limit, take: limit, orderBy })
+    const items = await prisma.inventoryItem.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy,
+        include: {
+            category: { select: { id: true, name: true, description: true } },
+            createdBy: { select: { id: true, name: true, email: true, image: true } },
+        },
+    })
 
     return items
 }

@@ -1,5 +1,13 @@
-export default function Page() {
+import { auth } from '@/lib/auth'
+import { ProductDataTable } from '@/components/product/product-data-table'
+
+export default async function Page() {
+    const session = await auth()
+
     return (
-        <div>This is product page</div>
+        <>
+            <h1>Products</h1>
+            <ProductDataTable />
+        </>
     )
 }

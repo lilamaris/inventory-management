@@ -17,3 +17,11 @@ function buildNode(node: RouteNode, parentPath = ''): RouteNode {
         result.subRoutes = node.subRoutes.map((child) => buildNode(child, href)) as [RouteNode, ...RouteNode[]]
     return result
 }
+
+export const formatDate = (date: Date) => {
+    return date.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    })
+}
