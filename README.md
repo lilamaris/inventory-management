@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 재고관리 애플리케이션
 
-## Getting Started
+Next.js + Prisma ORM(postgres) 를 이용한 재고관리(Inventory management) 애플리케이션입니다.
 
-First, run the development server:
+프로젝트 목표는 다음과 같이 설정했습니다.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 프로젝트 목표
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+-   Next.js + Prisma + PostgreSQL 기반 재고 관리 시스템 구축
+-   사용자 인증(Authentification) 및 권한(Authorization) 관리 기능 포함
+-   재고(Item), 사용자(User), 권한(Role/Permission) 등 CRUD 기능 포함
+-   RBAC(Role-Based Access Control)로 세분화된 접근 제어 구현
+-   인증 및 인가는 JWT(Json Web Token) 사용
+-   UI는 shadcn + TailwindCSS를 기본 디자인 시스템으로 이용
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 핵심 기능
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**1. 인증(Authentification)**
 
-## Learn More
+-   회원 가입 / 로그인 / 로그아웃
+-   JWT 발급 및 검증
+-   서버측(SSR) 요청 시 쿠키에 저장된 JWT로 세션 검증
 
-To learn more about Next.js, take a look at the following resources:
+**2. 인가(Authorization) / RBAC**
+- *Domain*, *Resource*, *Action*으로 이뤄진 Permission 테이블
+- Action: _Create_, _Read_, _Update_, _Delete_ 행동
+- Resource: 애플리케이션에서 다루는 자원 (Inventory, Transaction, User 등)
+- Domain: 자원이 속한 범위 (창고 Id 등)
+- Role <-> Permission 매핑을 통해 권한 부여
+- 요청 시 사용자 Role 확인 -> 해당 Role에 적합한 Permission 있는지 검사
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**3. 재고 관리(Inventory management)**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+-   재고 품목(Item) CRUD
+-   품목별 재고 수량 관리 (입, 출고 내역)
+-   필터링 기능
 
-## Deploy on Vercel
+**4. 사용자 관리(User management)**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+-   사용자(User) CRUD
+-   Role 할당
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**5. 권한(Role/Permission) 관리**
+
+-   Role CRUD
+-   Permission 정의 및 편집
+-   Role <-> Permission 매핑 관리
+
+## 사용 기술 스택 요약
+
+-   **Frontend, Backend**: Next.js (React 기반, SSR)
+-   **ORM / Database**: Prisma ORM + PostgreSQL
+-   **AuthN / AuthZ**: Auth.js (NextAuth.js) + RBAC(Role-Based Access Control)
+-   **UI**: shadcn + TailwindCSS
+-   **Utility**: Zod (입력 값 검증), bcrypt (해싱)
