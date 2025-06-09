@@ -1,7 +1,5 @@
-import 'server-only'
-
 import { JWT } from 'next-auth/jwt'
-import NextAuth, { DefaultSession, NextAuthConfig, User } from 'next-auth'
+import NextAuth, { DefaultSession, NextAuthConfig, Session, User } from 'next-auth'
 import type { Provider } from 'next-auth/providers'
 import Credentials from 'next-auth/providers/credentials'
 import Github from 'next-auth/providers/github'
@@ -91,10 +89,10 @@ const authOptions: NextAuthConfig = {
     session: { strategy: 'jwt' },
     providers,
     callbacks: {
-        authorized: async ({ auth, request }) => {
+        authorized: async ({ auth, request }): Promise<boolean> => {
             return true
         },
-        jwt: async ({ token, user, trigger }) => {
+        jwt: async ({ token, user, trigger }): Promise<JWT> => {
             if (trigger === 'signUp') {
                 console.log('signUp trigger', token, user)
                 if (!user) {
@@ -122,7 +120,7 @@ const authOptions: NextAuthConfig = {
 
             return token
         },
-        session: async ({ session, token }) => {
+        session: async ({ session, token }): Promise<Session> => {
             session.user.role = token.role
             return session
         },
