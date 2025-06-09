@@ -68,26 +68,3 @@ export function HeaderBreadcrumb() {
         </Breadcrumb>
     )
 }
-
-// {breadcrumb.subRoutes ? (
-//     <DropdownMenu>
-//         <DropdownMenuTrigger className="group/dropdown-menu">
-//             <span className="flex items-center gap-2">
-//                 {breadcrumb.label}
-//                 <ChevronDown className="size-4 transition-transform group-data-[state=open]/dropdown-menu:rotate-180" />
-//             </span>
-//         </DropdownMenuTrigger>
-//         <DropdownMenuContent align="start">
-//             {breadcrumb.subRoutes.map((subRoute) => (
-//                 <DropdownMenuItem key={subRoute.id}>{subRoute.label}</DropdownMenuItem>
-//             ))}
-//         </DropdownMenuContent>
-//     </DropdownMenu>
-// ) : (
-//     <BreadcrumbLink href={breadcrumb.href}>{breadcrumb.label}</BreadcrumbLink>
-// )}
-// {index < breadcrumbs.length - 1 && (
-//     <BreadcrumbSeparator>
-//         <SlashIcon />
-//     </BreadcrumbSeparator>
-// )}
