@@ -7,7 +7,6 @@ import {
     SidebarGroupContent,
     SidebarGroupLabel,
     SidebarHeader,
-    SidebarItem,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
@@ -15,52 +14,52 @@ import {
 import Link from 'next/link'
 import { GalleryVerticalEnd, LogOut } from 'lucide-react'
 import { auth } from '@/lib/auth'
-
-export interface SidebarGroupItem {
-    label: string
-    href?: string
-    icon?: React.ReactNode
-    subGroups?: SidebarGroupItem[]
-}
+import { RouteMeta } from '@/lib/definition/appmeta'
 
 export interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-    groups: SidebarGroupItem[]
+    navigations: RouteMeta[]
 }
 
-const renderSidebarGroup = ({ label, icon, href, subGroups }: SidebarGroupItem, depth = 0) => {
-    return subGroups && subGroups.length > 0 ? (
-        <SidebarGroup key={label}>
-            {href ? (
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton asChild>
-                            <Link href={href || ''}>
-                                {icon}
-                                {label}
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
-            ) : (
-                <SidebarGroupLabel>{label}</SidebarGroupLabel>
-            )}
-            <SidebarGroupContent>
-                <SidebarMenu>{subGroups.map((groups) => renderSidebarGroup(groups, depth + 1))}</SidebarMenu>
-            </SidebarGroupContent>
-        </SidebarGroup>
-    ) : (
-        <SidebarMenuItem key={label}>
+const renderSingleItem = (route: RouteMeta, depth: number) => {
+    return (
+        <SidebarMenuItem key={route.label}>
             <SidebarMenuButton asChild>
-                <Link href={href || ''} style={{ paddingLeft: `${depth * 12}px` }}>
-                    {icon}
-                    {label}
+                <Link href={route.id} style={depth > 0 ? { paddingLeft: `${depth * 12}px` } : {}}>
+                    {route.icon && React.createElement(route.icon, { className: 'size-4' })}
+                    {route.label}
                 </Link>
             </SidebarMenuButton>
         </SidebarMenuItem>
     )
 }
+const renderSidebarGroup = (route: RouteMeta & { subRoutes?: RouteMeta[] }, depth = 0) => {
+    const { id, label, subRoutes = [] } = route
 
-export const AppSidebar = async ({ groups = [], ...props }: AppSidebarProps) => {
+    const subRoutesHrefMutated = subRoutes.map((subRoute) => ({ ...subRoute, id: `${id}/${subRoute.id}` }))
+
+    if (!subRoutes || subRoutes.length === 0) {
+        return depth === 0 ? (
+            <SidebarGroup key={id}>
+                <SidebarMenu>{renderSingleItem(route, depth)}</SidebarMenu>
+            </SidebarGroup>
+        ) : (
+            renderSingleItem(route, depth)
+        )
+    }
+
+    return (
+        <SidebarGroup key={id}>
+            <SidebarGroupLabel>{label}</SidebarGroupLabel>
+            <SidebarGroupContent>
+                <SidebarMenu>
+                    {subRoutesHrefMutated.map((subRoute) => renderSidebarGroup(subRoute, depth + 1))}
+                </SidebarMenu>
+            </SidebarGroupContent>
+        </SidebarGroup>
+    )
+}
+
+export async function AppSidebar({ navigations = [], ...props }: AppSidebarProps) {
     const session = await auth()
 
     return (
@@ -82,13 +81,13 @@ export const AppSidebar = async ({ groups = [], ...props }: AppSidebarProps) => 
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
-            <SidebarContent>{groups.map((group) => renderSidebarGroup(group))}</SidebarContent>
+            <SidebarContent>{navigations.map((navigation) => renderSidebarGroup(navigation))}</SidebarContent>
             <SidebarFooter>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
                             <Link href="/auth/profile">
-                                <img src={session?.user?.image || ''} alt="Profile" className="size-8 rounded-full" />
+                                <img src={session?.user?.image || '#'} alt="Profile" className="size-8 rounded-full" />
                                 <div className="flex flex-col gap-0.5 leading-none">
                                     <span className="font-medium">{session?.user?.name}</span>
                                     <span className="text-muted-foreground">{session?.user?.email}</span>
