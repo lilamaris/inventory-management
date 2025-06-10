@@ -8,6 +8,6 @@ export const isExistingUser = async (email: string) => {
 export const getUserAuthByEmail = async (email: string) => {
     return await prisma.user.findUnique({
         where: { email },
-        include: { Role: true },
+        include: { role: true },
     })
 }
