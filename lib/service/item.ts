@@ -1,39 +1,30 @@
 import { prisma } from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
 
-export interface RtrvItemPaginationOptions {
-    page: number
-    limit: number
-}
-
-export type RtrvItemOptions = {
-    pagination?: RtrvItemPaginationOptions
+export type PaginationOptions = { page: number; limit: number }
+export type QueryOption = {
+    pagination?: PaginationOptions
     orderBy?: Prisma.ItemOrderByWithRelationInput
 }
+export type QueryParams<T extends Prisma.ItemWhereInput | Prisma.ItemWhereUniqueInput> = QueryOption & T
 
-export type RtrvParams<T extends Prisma.ItemWhereInput | Prisma.ItemWhereUniqueInput> = RtrvItemOptions & T
+const defaultPaginationParams: PaginationOptions = { page: 1, limit: 10 }
+const defaultOrderByParams: Prisma.ItemOrderByWithRelationInput = {
+    createdAt: 'desc',
+}
 
-export type ItemResult = Prisma.ItemGetPayload<{
+type ItemResult = Prisma.ItemGetPayload<{
     include: {
         category: true
         _count: { select: { purchaseOrderItems: true; salesOrderItems: true } }
     }
 }>
 
-const defaultPaginationParams: RtrvItemPaginationOptions = {
-    page: 1,
-    limit: 10,
-}
-
-const defaultOrderByParams: Prisma.ItemOrderByWithRelationInput = {
-    createdAt: 'desc',
-}
-
 export async function findItems({
     pagination = defaultPaginationParams,
     orderBy = defaultOrderByParams,
     ...params
-}: RtrvParams<Prisma.ItemWhereInput>): Promise<ItemResult[]> {
+}: QueryParams<Prisma.ItemWhereInput>): Promise<ItemResult[]> {
     return await prisma.item.findMany({
         where: params,
         include: {
@@ -48,7 +39,7 @@ export async function findItems({
 
 export async function findItemUnique({
     ...params
-}: RtrvParams<Prisma.ItemWhereUniqueInput>): Promise<ItemResult | null> {
+}: QueryParams<Prisma.ItemWhereUniqueInput>): Promise<ItemResult | null> {
     return await prisma.item.findUnique({
         where: params,
         include: {
@@ -106,4 +97,11 @@ export async function deleteUniqueItem(selector: Prisma.ItemWhereUniqueInput): P
             _count: { select: { purchaseOrderItems: true, salesOrderItems: true } },
         },
     })
+}
+
+export async function existsItem(selector: Prisma.ItemWhereUniqueInput): Promise<boolean> {
+    const count = await prisma.item.count({
+        where: selector,
+    })
+    return count > 0
 }
