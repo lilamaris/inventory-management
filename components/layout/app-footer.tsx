@@ -25,7 +25,7 @@ export function AppFooter({ className, ...props }: React.HTMLAttributes<HTMLDivE
                 <Separator orientation="vertical" className="mx-2 data-[orientation=vertical]:h-4" />
                 <div className="flex items-center gap-2">
                     <Button variant="ghost" asChild>
-                        <Link href="#">
+                        <Link href="https://github.com/lilamaris/inventory-management">
                             <svg
                                 className="fill-foreground"
                                 role="img"
