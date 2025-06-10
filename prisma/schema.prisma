@@ -14,21 +14,21 @@ datasource db {
 }
 
 model User {
-  id            String          @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String?
-  email         String          @unique
+  email         String    @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
 
-  passwordHash  String?
-  createdAt            DateTime               @default(now())
-  updatedAt            DateTime               @updatedAt
-  Role                 Role?                  @relation(fields: [roleId], references: [id])
-  roleId               String?
-  InventoryItem        InventoryItem[]
-  InventoryTransaction InventoryTransaction[]
+  passwordHash             String?
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime                   @updatedAt
+  role                     Role?                      @relation(fields: [roleId], references: [id])
+  roleId                   String?
+  purchaseOrderTransactions PurchaseOrderTransaction[]
+  salesOrderTransactions    SalesOrderTransaction[]
 }
 
 model Account {
@@ -53,7 +53,7 @@ model Account {
 }
 
 model Session {
-  id            String           @id @default(cuid())
+  id           String   @id @default(cuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
@@ -105,35 +105,119 @@ model RolePermission {
   @@unique([roleId, permissionId])
 }
 
-model InventoryItem {
-  id           String                 @id @default(uuid())
-  name         String
-  sku          String                 @unique
-  description  String?
-  quantity     Int                    @default(0)
-  categoryId   String?
-  category     Category?              @relation(fields: [categoryId], references: [id])
-  createdById  String
-  createdBy    User                   @relation(fields: [createdById], references: [id])
-  createdAt    DateTime               @default(now())
-  updatedAt    DateTime               @updatedAt
-  transactions InventoryTransaction[]
+model Item {
+  id          String   @id @default(uuid())
+  name        String
+  sku         String   @unique
+  description String?
+  quantity    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  category          Category            @relation(fields: [categoryId], references: [id])
+  categoryId        String
+  purchaseOrderItems PurchaseOrderItem[]
+  salesOrderItems    SalesOrderItem[]
 }
 
 model Category {
-  id          String          @id @default(uuid())
-  name        String          @unique
+  id          String  @id @default(uuid())
+  name        String  @unique
   description String?
-  item        InventoryItem[]
+  items       Item[]
 }
 
-model InventoryTransaction {
-  id          String        @id @default(uuid())
-  item        InventoryItem @relation(fields: [itemId], references: [id])
-  itemId      String
-  change      Int
-  note        String?
-  createdById String
-  createdBy   User          @relation(fields: [createdById], references: [id])
-  createdAt   DateTime      @default(now())
+model Vendor {
+  id            String          @id @default(uuid())
+  name          String
+  description   String?
+  purchaseOrders PurchaseOrder[]
+}
+
+model Customer {
+  id         String       @id @default(uuid())
+  name       String
+  salesOrders SalesOrder[]
+}
+
+enum OrderStatus {
+  PENDING
+  SHIPPING
+  SHIPPED
+  COMPLETED
+  CANCELLED
+}
+
+model PurchaseOrder {
+  id         String      @id @default(uuid())
+  status     OrderStatus
+  orderedAt  DateTime
+  expectedAt DateTime
+
+  vendor   Vendor @relation(fields: [vendorId], references: [id])
+  vendorId String
+
+  items                    PurchaseOrderItem[]
+  purchaseOrderTransactions PurchaseOrderTransaction[]
+}
+
+model SalesOrder {
+  id         String      @id @default(uuid())
+  status     OrderStatus
+  orderedAt  DateTime
+  expectedAt DateTime
+
+  customer   Customer @relation(fields: [customerId], references: [id])
+  customerId String
+
+  items                 SalesOrderItem[]
+  salesOrderTransactions SalesOrderTransaction[]
+}
+
+model PurchaseOrderItem {
+  id        String @id @default(uuid())
+  quantity  Int
+  unitPrice Int
+
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+  purchaseOrderId String
+
+  item   Item   @relation(fields: [itemId], references: [id])
+  itemId String
+}
+
+model SalesOrderItem {
+  id        String @id @default(uuid())
+  quantity  Int
+  unitPrice Int
+
+  salesOrder   SalesOrder @relation(fields: [salesOrderId], references: [id])
+  salesOrderId String
+
+  item   Item   @relation(fields: [itemId], references: [id])
+  itemId String
+}
+
+model PurchaseOrderTransaction {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+  purchaseOrderId String
+}
+
+model SalesOrderTransaction {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  salesOrder   SalesOrder @relation(fields: [salesOrderId], references: [id])
+  salesOrderId String
 }

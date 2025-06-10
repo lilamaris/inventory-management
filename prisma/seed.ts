@@ -129,28 +129,20 @@ const roleData: Prisma.RoleCreateInput[] = [
     },
 ]
 
-const buildItemData = (category: Category, createdBy: User, itemName: string) => {
-    const quantity = Math.floor(Math.random() * 100) + 1
+const buildItemData = (category: Category, itemName: string) => {
+    const quantity = Math.floor(Math.random() * 1000) + 1
     const data = {
         name: itemName,
         sku: `${category.name.toUpperCase()}-${itemName.toUpperCase()}`,
         description: `This item is a ${itemName}`,
         quantity,
         categoryId: category.id,
-        createdById: createdBy.id,
     }
 
     return data
 }
 
 const seed = async () => {
-    console.info('Cleaning up database...')
-    await prisma.rolePermission.deleteMany()
-    await prisma.permission.deleteMany()
-    await prisma.role.deleteMany()
-    await prisma.inventoryItem.deleteMany()
-    await prisma.category.deleteMany()
-
     console.info('Creating permissions...')
     await prisma.permission.createMany({
         data: permissionData,
@@ -182,21 +174,6 @@ const seed = async () => {
     })
     console.info(`Created ${adminPermission.count} admin permissions`)
 
-    console.info('Create system user')
-    const systemUser = await prisma.user.create({
-        data: {
-            email: 'system@example.com',
-            name: 'System',
-            passwordHash: await hash('system', 10),
-            Role: {
-                connect: {
-                    name: 'Admin',
-                },
-            },
-        },
-    })
-    console.info(`Created system user: ${systemUser.name}`)
-
     console.info('Creating categories...')
     await prisma.category.createMany({ data: categoryData })
     console.info(`Created categories`)
@@ -207,8 +184,8 @@ const seed = async () => {
         const categoryItems = itemData[index]
         console.info(`Create ${category.name} items (target: ${categoryItems.length})`)
         for (const item of categoryItems) {
-            const data = buildItemData(category, systemUser, item)
-            await prisma.inventoryItem.create({ data })
+            const data = buildItemData(category, item)
+            await prisma.item.create({ data })
             console.info(`Created item: ${data.name} (${data.sku})`)
         }
         console.info(`Created ${categoryItems.length} items for category ${category.name}`)
