@@ -1,5 +1,5 @@
 import { auth } from '@/lib/auth'
-import { ProductDataTable } from '@/components/product/product-data-table'
+// import { ProductDataTable } from '@/components/product/product-data-table'
 
 export default async function Page() {
     const session = await auth()
@@ -7,7 +7,7 @@ export default async function Page() {
     return (
         <>
             <h1>Products</h1>
-            <ProductDataTable />
+            {/* <ProductDataTable /> */}
         </>
     )
 }
