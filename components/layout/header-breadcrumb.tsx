@@ -13,20 +13,24 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { ChevronDown, SlashIcon } from 'lucide-react'
 import { RouteNode } from '@/lib/definition/appmeta'
 import { Fragment } from 'react'
+import { Button } from '../ui/button'
 
 function subrouteBreadcrumb(breadcrumb: RouteNode) {
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger className="group/dropdown-menu">
-                <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" asChild>
+                <DropdownMenuTrigger className="group/dropdown-menu">
                     {breadcrumb.label}
-                    <ChevronDown className="self-end size-4 transition-transform group-data-[state=open]/dropdown-menu:rotate-180" />
-                </div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
+                    <ChevronDown className="size-4 transition-transform group-data-[state=open]/dropdown-menu:rotate-180" />
+                </DropdownMenuTrigger>
+            </Button>
+            <DropdownMenuContent className="bg-background" align="start">
                 {breadcrumb.subRoutes?.map((subRoute) => (
-                    <DropdownMenuItem key={subRoute.id}>
-                        <BreadcrumbLink href={subRoute.href}>{subRoute.label}</BreadcrumbLink>
+                    <DropdownMenuItem key={subRoute.id} asChild>
+                        <BreadcrumbLink href={subRoute.href}>
+                            {subRoute.icon && <subRoute.icon className="size-4" />}
+                            {subRoute.label}
+                        </BreadcrumbLink>
                     </DropdownMenuItem>
                 ))}
             </DropdownMenuContent>
