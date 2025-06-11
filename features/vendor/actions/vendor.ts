@@ -13,6 +13,8 @@ export const createVendorAction = async (state: CreateVendorState, formData: For
         return {
             errors: validatedFields.error.flatten().fieldErrors,
             formData,
+            success: false,
+            message: 'Invalid form data',
         }
 
     const { name, description } = validatedFields.data
@@ -22,7 +24,17 @@ export const createVendorAction = async (state: CreateVendorState, formData: For
             data: { name, description },
         })
         revalidatePath('/')
+        return {
+            formData,
+            success: true,
+            message: 'Vendor created successfully',
+        }
     } catch (error) {
         console.error('Error creating vendor: ', error)
+        return {
+            formData,
+            success: false,
+            message: 'An error occurred while creating the vendor',
+        }
     }
 }

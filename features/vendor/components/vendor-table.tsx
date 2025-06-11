@@ -14,6 +14,7 @@ import { Filter, MoreVertical } from 'lucide-react'
 
 import { VendorResult } from '@/features/vendor/api/vendor'
 import { VendorAddSheet } from './vendor-add-sheet'
+import { VendorPurchaseOrderSheet } from './vendor-purchase-order-sheet'
 
 const vendorSchema = z.object({
     id: z.string(),
@@ -28,6 +29,7 @@ const vendorColumns: ColumnDef<z.infer<typeof vendorSchema>>[] = [
         header: ({ table }) => (
             <div className="flex items-center justify-center">
                 <Checkbox
+                    name="select-all"
                     checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
                     onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
                     aria-label="Select all"
@@ -37,6 +39,7 @@ const vendorColumns: ColumnDef<z.infer<typeof vendorSchema>>[] = [
         cell: ({ row }) => (
             <div className="flex items-center justify-center">
                 <Checkbox
+                    name="select-row"
                     checked={row.getIsSelected()}
                     onCheckedChange={(value) => row.toggleSelected(!!value)}
                     aria-label="Select row"
@@ -62,7 +65,18 @@ const vendorColumns: ColumnDef<z.infer<typeof vendorSchema>>[] = [
         accessorKey: 'purchaseOrders',
         header: 'Purchase Orders',
         cell: ({ row }) => {
-            return <div className="text-sm">{row.original.purchaseOrders}</div>
+            return row.original.purchaseOrders ? (
+                <VendorPurchaseOrderSheet
+                    vendorId={row.original.id}
+                    openSheetButton={() => (
+                        <Button variant="outline" size="sm">
+                            Have {row.original.purchaseOrders} Order
+                        </Button>
+                    )}
+                />
+            ) : (
+                <div className="text-sm">No purchase orders</div>
+            )
         },
     },
     {

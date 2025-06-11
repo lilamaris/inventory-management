@@ -8,5 +8,7 @@ export type ActionState<T extends z.ZodType> =
     | {
           formData?: FormData
           errors?: InferFieldErrors<T>
+          success?: boolean
+          message?: string
       }
     | undefined

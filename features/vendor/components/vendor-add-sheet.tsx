@@ -28,7 +28,11 @@ import { Loader2 } from 'lucide-react'
 import { createVendorAction } from '../actions/vendor'
 import * as React from 'react'
 
-export function VendorAddSheet({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export interface VendorAddSheetProps extends React.HTMLAttributes<HTMLDivElement> {
+    openSheetButton?: () => React.ReactNode
+}
+
+export function VendorAddSheet({ className, openSheetButton, ...props }: VendorAddSheetProps) {
     const [sheetOpen, setSheetOpen] = React.useState(false)
     const [state, formAction, isPending] = React.useActionState<CreateVendorState, FormData>(
         createVendorAction,
@@ -42,15 +46,27 @@ export function VendorAddSheet({ className, ...props }: React.HTMLAttributes<HTM
         },
     })
 
+    React.useEffect(() => {
+        if (state?.success) {
+            setSheetOpen(false)
+            form.reset()
+            console.log('success')
+        }
+    }, [state?.success])
+
     const formId = React.useId()
 
     return (
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
             <SheetTrigger asChild>
-                <Button size="icon">
-                    <Plus />
-                    <span className="sr-only">Add Vendor</span>
-                </Button>
+                {openSheetButton ? (
+                    openSheetButton()
+                ) : (
+                    <Button>
+                        <Plus />
+                        <span>Add Vendor</span>
+                    </Button>
+                )}
             </SheetTrigger>
             <SheetContent>
                 <SheetHeader>
@@ -60,13 +76,7 @@ export function VendorAddSheet({ className, ...props }: React.HTMLAttributes<HTM
                     </SheetDescription>
                 </SheetHeader>
                 <Form {...form}>
-                    <form
-                        id={formId}
-                        className={cn('grid gap-6', className)}
-                        action={(formData) => {
-                            formAction(formData)
-                        }}
-                    >
+                    <form id={formId} className={cn('grid gap-6', className)} action={formAction}>
                         <FormField
                             control={form.control}
                             name="name"
@@ -74,7 +84,11 @@ export function VendorAddSheet({ className, ...props }: React.HTMLAttributes<HTM
                                 <FormItem>
                                     <FormLabel>Name</FormLabel>
                                     <FormControl>
-                                        <Input {...field} />
+                                        <Input
+                                            {...field}
+                                            autoComplete="off"
+                                            defaultValue={state?.formData?.get('name') as string}
+                                        />
                                     </FormControl>
                                     {state?.errors?.name && <FormMessage>{state.errors.name}</FormMessage>}
                                 </FormItem>
@@ -88,6 +102,7 @@ export function VendorAddSheet({ className, ...props }: React.HTMLAttributes<HTM
                                     <FormLabel>Description</FormLabel>
                                     <FormControl>
                                         <Textarea
+                                            className="resize-none"
                                             {...field}
                                             defaultValue={state?.formData?.get('description') as string}
                                         />
@@ -97,7 +112,7 @@ export function VendorAddSheet({ className, ...props }: React.HTMLAttributes<HTM
                         />
                     </form>
                 </Form>
-                <SheetFooter>
+                <SheetFooter className="shrink-0">
                     <Button type="submit" form={formId} disabled={isPending}>
                         {isPending && <Loader2 className="size-4 animate-spin" />}
                         Add Vendor
