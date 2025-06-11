@@ -3,7 +3,6 @@ import {
     Home,
     Package,
     Layers,
-    History,
     PackagePlus,
     User,
     Truck,
@@ -24,21 +23,6 @@ import {
     HelpCircle,
     Mail,
 } from 'lucide-react'
-import { buildRouteTree } from '@/lib/utils'
-
-export interface AppMeta {
-    versionRoutePrefix: string
-    version: string
-    name: string
-    description: string
-}
-
-export const appMeta: AppMeta = {
-    versionRoutePrefix: '/v0',
-    version: '0.0.1',
-    name: 'Inventory Inc.',
-    description: 'Inventory Inc. is a simple inventory management system.',
-}
 
 export interface RouteMeta {
     label: string
@@ -67,25 +51,24 @@ const availableRoutes: Record<string, RouteNode> = {
     EMPLOYEE: { id: 'employee', label: 'Employee', icon: UserCheck },
     STOCK_MOVEMENT: { id: 'stock-movement', label: 'Stock Movement', icon: TrendingUp },
     SALES_REPORT: { id: 'sales-report', label: 'Sales Report', icon: BarChart2 },
-    PURCHASE_REPORT: { id: 'purchase-report', label: 'Purchase Report', icon: BarChart },
+    PURCHASE_REPORT: { id: 'purchase-report', label: 'Purchase Report', icon: BarChart2 },
     NOTIFICATION: { id: 'notification', label: 'Notification', icon: Bell },
     INTEGRATION: { id: 'integration', label: 'Integration', icon: Zap },
-    SETTING: { id: 'setting', label: 'Settings', icon: Settings },
     DOCUMENTATION: { id: 'documentation', label: 'Documentation', icon: BookOpen },
     FAQ: { id: 'faq', label: 'FAQ', icon: HelpCircle },
     CONTACT: { id: 'contact', label: 'Contact', icon: Mail },
 }
 
-const routeHierarchy: Record<string, RouteNode> = {
+export const routeTree: Record<string, RouteNode> = {
     overview: {
         id: 'overview',
         label: 'Overview',
         icon: BarChart2,
         subRoutes: [
-            availableRoutes.DASHBOARD,
-            availableRoutes.STOCK_MOVEMENT,
-            availableRoutes.SALES_REPORT,
-            availableRoutes.PURCHASE_REPORT,
+            { ...availableRoutes.DASHBOARD, href: '/overview/dashboard' },
+            { ...availableRoutes.STOCK_MOVEMENT, href: '/overview/stock-movement' },
+            { ...availableRoutes.SALES_REPORT, href: '/overview/sales-report' },
+            { ...availableRoutes.PURCHASE_REPORT, href: '/overview/purchase-report' },
         ],
     },
     inventory: {
@@ -93,42 +76,58 @@ const routeHierarchy: Record<string, RouteNode> = {
         label: 'Inventory',
         icon: Package,
         subRoutes: [
-            availableRoutes.PRODUCT,
-            availableRoutes.CATEGORY,
-            availableRoutes.STOCK_LEVEL,
-            availableRoutes.LOW_STOCK,
+            { ...availableRoutes.PRODUCT, href: '/inventory/product' },
+            { ...availableRoutes.CATEGORY, href: '/inventory/category' },
+            { ...availableRoutes.STOCK_LEVEL, href: '/inventory/stock-level' },
+            { ...availableRoutes.LOW_STOCK, href: '/inventory/low-stock' },
         ],
     },
     purchase: {
         id: 'purchase',
         label: 'Purchase',
         icon: PackagePlus,
-        subRoutes: [availableRoutes.PURCHASE_ORDER, availableRoutes.RECEIVE_SHIPMENT, availableRoutes.SUPPLIER],
+        subRoutes: [
+            { ...availableRoutes.PURCHASE_ORDER, href: '/purchase/purchase-order' },
+            { ...availableRoutes.RECEIVE_SHIPMENT, href: '/purchase/receive-shipment' },
+            { ...availableRoutes.SUPPLIER, href: '/purchase/supplier' },
+        ],
     },
     order: {
         id: 'order',
         label: 'Order',
         icon: ClipboardList,
-        subRoutes: [availableRoutes.SALES_ORDER, availableRoutes.SEND_SHIPMENT, availableRoutes.RETURN_SHIPMENT],
+        subRoutes: [
+            { ...availableRoutes.SALES_ORDER, href: '/order/sales-order' },
+            { ...availableRoutes.SEND_SHIPMENT, href: '/order/send-shipment' },
+            { ...availableRoutes.RETURN_SHIPMENT, href: '/order/return-shipment' },
+        ],
     },
     people: {
         id: 'people',
         label: 'People',
         icon: User,
-        subRoutes: [availableRoutes.CUSTOMER, availableRoutes.EMPLOYEE],
+        subRoutes: [
+            { ...availableRoutes.CUSTOMER, href: '/people/customer' },
+            { ...availableRoutes.EMPLOYEE, href: '/people/employee' },
+        ],
     },
     settings: {
         id: 'settings',
         label: 'Settings',
         icon: Settings,
-        subRoutes: [availableRoutes.NOTIFICATION, availableRoutes.INTEGRATION, availableRoutes.SETTING],
+        subRoutes: [
+            { ...availableRoutes.NOTIFICATION, href: '/settings/notification' },
+            { ...availableRoutes.INTEGRATION, href: '/settings/integration' },
+        ],
     },
     help: {
         id: 'help',
         label: 'Help & Support',
         icon: HelpCircle,
-        subRoutes: [availableRoutes.DOCUMENTATION, availableRoutes.FAQ, availableRoutes.CONTACT],
+        subRoutes: [
+            { ...availableRoutes.DOCUMENTATION, href: '/help/documentation' },
+            { ...availableRoutes.FAQ, href: '/help/faq' },
+            { ...availableRoutes.CONTACT, href: '/help/contact' },
+        ],
     },
 }
-
-export const routeTree = buildRouteTree(routeHierarchy, appMeta.versionRoutePrefix)

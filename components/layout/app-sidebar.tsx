@@ -17,7 +17,7 @@ import { auth } from '@/lib/auth'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@radix-ui/react-collapsible'
 import { cn } from '@/lib/utils'
 
-import { routeTree, RouteNode } from '@/lib/definition/appmeta'
+import { routeTree, type RouteNode } from '@/config/routeTree'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
 function renderCollapsibleRoute(route: RouteNode) {
@@ -120,8 +120,8 @@ function renderSecondaryRouteTree(routeTree: RouteNode[]) {
 export async function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const session = await auth()
 
-    const navMain = routeTree.filter((tree) => !['settings', 'help'].includes(tree.id))
-    const navSettings = routeTree.filter((tree) => ['settings', 'help'].includes(tree.id))
+    const navMain = Object.values(routeTree).filter((tree) => !['settings', 'help'].includes(tree.id))
+    const navSettings = Object.values(routeTree).filter((tree) => ['settings', 'help'].includes(tree.id))
 
     return (
         <Sidebar className={cn(props.className, 'select-none')} {...props}>

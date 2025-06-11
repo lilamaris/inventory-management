@@ -1,8 +1,8 @@
 'use client'
 
-import { signInProviderAction } from '@/lib/action/auth'
+import { signInProviderAction } from '@/features/auth/actions/auth'
 import { useActionState } from 'react'
-import { Button, buttonVariants } from '../ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { VariantProps } from 'class-variance-authority'
 import { Loader2 } from 'lucide-react'
 

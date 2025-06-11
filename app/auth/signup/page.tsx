@@ -1,4 +1,4 @@
-import { SignUpForm } from '@/components/auth/signup-form'
+import { SignUpForm } from '@/features/auth/components/signup-form'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { GalleryVerticalEnd } from 'lucide-react'
 import Link from 'next/link'

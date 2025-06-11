@@ -9,7 +9,7 @@ import { type Role } from '@prisma/client'
 import { prisma } from './prisma'
 import { compare } from 'bcrypt'
 
-import { getUserAuthByEmail } from './service/user'
+import { getUserAuthByEmail } from '../features/user/api/user'
 
 declare module 'next-auth/jwt' {
     interface JWT {

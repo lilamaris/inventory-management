@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { routeTree, RouteNode } from '@/lib/definition/appmeta'
+import { routeTree, type RouteNode } from '@/config/routeTree'
 
 export interface UseBreadcrumbsOptions {
     rootPath?: string
@@ -13,7 +13,7 @@ export function useBreadcrumbs(options?: UseBreadcrumbsOptions): RouteNode[] {
     const crumbs: RouteNode[] = [{ id: 'home', label: 'Home', href: rootPath }]
     const segments = pathname.split('/').filter(Boolean).slice(1)
 
-    let candidate: RouteNode[] = routeTree
+    let candidate: RouteNode[] = Object.values(routeTree)
     for (const segment of segments) {
         const found = candidate.find((node) => node.id === segment)
         if (!found) break

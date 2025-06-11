@@ -7,11 +7,11 @@ import {
     SignInCredentialsState,
     signUpCredentialsSchema,
     SignUpCredentialsState,
-} from '@/lib/definition/auth'
+} from '@/features/auth/types/auth'
 import { AuthError } from 'next-auth'
-import { isExistingUser } from '../service/user'
+import { isExistingUser } from '../../user/api/user'
 import bcrypt from 'bcrypt'
-import { prisma } from '../prisma'
+import { prisma } from '../../../lib/prisma'
 
 export const signInProviderAction = async (state: SignInCredentialsState, formData: FormData) => {
     const { provider, redirectTo } = Object.fromEntries(formData) as {

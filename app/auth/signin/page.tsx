@@ -1,9 +1,9 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { GalleryVerticalEnd } from 'lucide-react'
 
-import { SignInForm } from '@/components/auth/signin-form'
+import { SignInForm } from '@/features/auth/components/signin-form'
 import { providerMap } from '@/lib/auth'
-import { SignInProviderButton } from '@/components/auth/signin-provider-button'
+import { SignInProviderButton } from '@/features/auth/components/signin-provider-button'
 import Link from 'next/link'
 
 export default function Page() {

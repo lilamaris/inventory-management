@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useActionState } from 'react'
-import { signUpCredentialsAction } from '@/lib/action/auth'
+import { signUpCredentialsAction } from '@/features/auth/actions/auth'
 import { Loader2 } from 'lucide-react'
 
 export interface Props extends React.ComponentProps<'div'> {
