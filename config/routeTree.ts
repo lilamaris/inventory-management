@@ -43,7 +43,7 @@ const availableRoutes: Record<string, RouteNode> = {
     LOW_STOCK: { id: 'low-stock', label: 'Low Stock', icon: AlertCircle },
     PURCHASE_ORDER: { id: 'purchase-order', label: 'Purchase Order', icon: FileText },
     SALES_ORDER: { id: 'sales-order', label: 'Sales Order', icon: ClipboardList },
-    SUPPLIER: { id: 'supplier', label: 'Supplier', icon: Truck },
+    VENDOR: { id: 'vendor', label: 'Vendor', icon: Truck },
     SEND_SHIPMENT: { id: 'send-shipment', label: 'Send Shipment', icon: Send },
     RECEIVE_SHIPMENT: { id: 'receive-shipment', label: 'Receive Shipment', icon: Archive },
     RETURN_SHIPMENT: { id: 'return-shipment', label: 'Return Shipment', icon: CornerUpLeft },
@@ -89,7 +89,7 @@ export const routeTree: Record<string, RouteNode> = {
         subRoutes: [
             { ...availableRoutes.PURCHASE_ORDER, href: '/purchase/purchase-order' },
             { ...availableRoutes.RECEIVE_SHIPMENT, href: '/purchase/receive-shipment' },
-            { ...availableRoutes.SUPPLIER, href: '/purchase/supplier' },
+            { ...availableRoutes.VENDOR, href: '/purchase/vendor' },
         ],
     },
     order: {
