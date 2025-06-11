@@ -11,6 +11,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { MoreVertical, Plus } from 'lucide-react'
+import { TableSkeleton } from '@/components/skeleton/table-skeleton'
 
 const itemSchema = z.object({
     id: z.string(),
@@ -85,17 +86,7 @@ const itemColumns: ColumnDef<z.infer<typeof itemSchema>>[] = [
 ]
 
 export function ItemTableSkeleton() {
-    return (
-        <div className="rounded-md border overflow-hidden grid">
-            {Array.from({ length: 10 }).map((_, index) => (
-                <div key={index} className="flex gap-4 p-3 not-last:border-b first:bg-muted/50">
-                    {Array.from({ length: itemColumns.length }).map((_, i) => (
-                        <Skeleton key={i} className="h-5 w-full" />
-                    ))}
-                </div>
-            ))}
-        </div>
-    )
+    return <TableSkeleton columns={itemColumns.length} />
 }
 
 export function ItemTable({ items }: { items: Promise<ItemResult[]> }) {
