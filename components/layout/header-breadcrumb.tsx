@@ -11,9 +11,10 @@ import {
 import { useBreadcrumbs } from '@/hooks/use-breadcrumb'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { ChevronDown, SlashIcon } from 'lucide-react'
-import { RouteNode } from '@/lib/definition/appmeta'
+import type { RouteNode } from '@/config/routeTree'
 import { Fragment } from 'react'
 import { Button } from '../ui/button'
+import { appMeta } from '@/config/app'
 
 function subrouteBreadcrumb(breadcrumb: RouteNode) {
     return (
@@ -27,7 +28,7 @@ function subrouteBreadcrumb(breadcrumb: RouteNode) {
             <DropdownMenuContent className="bg-background" align="start">
                 {breadcrumb.subRoutes?.map((subRoute) => (
                     <DropdownMenuItem key={subRoute.id} asChild>
-                        <BreadcrumbLink href={subRoute.href}>
+                        <BreadcrumbLink href={`${appMeta.versionRoutePrefix}${subRoute.href}`}>
                             {subRoute.icon && <subRoute.icon className="size-4" />}
                             {subRoute.label}
                         </BreadcrumbLink>

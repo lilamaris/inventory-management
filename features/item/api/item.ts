@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
+import { cache } from 'react'
 
 export type PaginationOptions = { page: number; limit: number }
 export type QueryOption = {
@@ -13,18 +14,18 @@ const defaultOrderByParams: Prisma.ItemOrderByWithRelationInput = {
     createdAt: 'desc',
 }
 
-type ItemResult = Prisma.ItemGetPayload<{
+export type ItemResult = Prisma.ItemGetPayload<{
     include: {
         category: true
         _count: { select: { purchaseOrderItems: true; salesOrderItems: true } }
     }
 }>
 
-export async function findItems({
-    pagination = defaultPaginationParams,
-    orderBy = defaultOrderByParams,
-    ...params
-}: QueryParams<Prisma.ItemWhereInput>): Promise<ItemResult[]> {
+export const getItems = cache(async (options?: QueryParams<Prisma.ItemWhereInput>): Promise<ItemResult[]> => {
+    const { pagination = defaultPaginationParams, orderBy = defaultOrderByParams, ...params } = options ?? {}
+
+    await new Promise((resolve) => setTimeout(resolve, 3000))
+
     return await prisma.item.findMany({
         where: params,
         include: {
@@ -35,9 +36,9 @@ export async function findItems({
         take: pagination.limit,
         orderBy,
     })
-}
+})
 
-export async function findItemUnique({
+export async function getItemUnique({
     ...params
 }: QueryParams<Prisma.ItemWhereUniqueInput>): Promise<ItemResult | null> {
     return await prisma.item.findUnique({

@@ -17,7 +17,7 @@ import * as React from 'react'
 
 export interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
-    data: Promise<TData[]>
+    data: TData[]
 }
 
 export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
@@ -27,7 +27,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     const [rowSelection, setRowSelection] = React.useState({})
 
     const table = useReactTable({
-        data: React.use(data),
+        data,
         columns,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
@@ -48,7 +48,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     return (
         <div className="rounded-md border overflow-hidden">
             <Table>
-                <TableHeader className="bg-muted/50">
+                <TableHeader className="bg-muted">
                     {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id}>
                             {headerGroup.headers.map((header) => {

@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils'
 
 import { routeTree, type RouteNode } from '@/config/routeTree'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { appMeta } from '@/config/app'
 
 function renderCollapsibleRoute(route: RouteNode) {
     if (route.subRoutes) {
@@ -54,7 +55,7 @@ function renderCollapsibleRoute(route: RouteNode) {
     }
     return (
         <SidebarMenuButton asChild>
-            <Link href={route.href ?? '#'}>
+            <Link href={route.href ? `${appMeta.versionRoutePrefix}${route.href}` : '#'}>
                 {route.icon && React.createElement(route.icon, { className: 'size-4' })}
                 {route.label}
             </Link>
