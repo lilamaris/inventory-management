@@ -6,7 +6,6 @@ import * as React from 'react'
 import z from 'zod'
 
 import { DataTable } from '@/components/data-table'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
