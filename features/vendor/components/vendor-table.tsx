@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import z from 'zod'
-import { ColumnDef } from '@tanstack/react-table'
+import { ColumnDef, RowData } from '@tanstack/react-table'
 
 import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -10,11 +10,10 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { TableSkeleton } from '@/components/skeleton/table-skeleton'
 import { DataTable } from '@/components/data-table'
-import { Filter, MoreVertical } from 'lucide-react'
+import { Filter, MoreVertical, Plus } from 'lucide-react'
 
 import { VendorResult } from '@/features/vendor/api/vendor'
-import { VendorAddSheet } from './vendor-add-sheet'
-import { VendorPurchaseOrderSheet } from './vendor-purchase-order-sheet'
+import { VendorInspect, VendorInspectSheet } from './vendor-inspect-sheet'
 
 const vendorSchema = z.object({
     id: z.string(),
@@ -65,23 +64,20 @@ const vendorColumns: ColumnDef<z.infer<typeof vendorSchema>>[] = [
         accessorKey: 'purchaseOrders',
         header: 'Purchase Orders',
         cell: ({ row }) => {
-            return row.original.purchaseOrders ? (
-                <VendorPurchaseOrderSheet
-                    vendorId={row.original.id}
-                    openSheetButton={() => (
-                        <Button variant="outline" size="sm">
-                            Have {row.original.purchaseOrders} Order
-                        </Button>
-                    )}
-                />
-            ) : (
-                <div className="text-sm">No purchase orders</div>
-            )
+            return <div className="text-sm">{row.original.purchaseOrders ?? 0} order exists</div>
         },
     },
     {
         id: 'actions',
-        cell: () => {
+        cell: ({ row, table }) => {
+            const handleEdit = () => {
+                table.options.meta?.setInspectVendor({
+                    sheetTitle: 'Edit Vendor',
+                    sheetDescription: 'Edit the vendor details',
+                    vendorId: row.original.id,
+                })
+            }
+
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -91,8 +87,7 @@ const vendorColumns: ColumnDef<z.infer<typeof vendorSchema>>[] = [
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-32">
-                        <DropdownMenuItem>View</DropdownMenuItem>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>
                         <DropdownMenuItem>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -101,12 +96,25 @@ const vendorColumns: ColumnDef<z.infer<typeof vendorSchema>>[] = [
     },
 ]
 
+declare module '@tanstack/react-table' {
+    interface TableMeta<TData extends RowData> {
+        setInspectVendor: (props: VendorInspect) => void
+    }
+}
+
 export function VendorTableSkeleton() {
     return <TableSkeleton columns={vendorColumns.length} />
 }
 
 export function VendorTable({ vendors }: { vendors: Promise<VendorResult[]> }) {
     const data = z.array(vendorSchema).parse(React.use(vendors))
+    const [inspectVendor, setInspectVendor] = React.useState<VendorInspect | null>(null)
+
+    const tableMeta = {
+        setInspectVendor: (props: VendorInspect) => {
+            setInspectVendor(props)
+        },
+    }
 
     return (
         <Tabs defaultValue="all">
@@ -124,13 +132,28 @@ export function VendorTable({ vendors }: { vendors: Promise<VendorResult[]> }) {
                             </Button>
                         </DropdownMenuTrigger>
                     </DropdownMenu>
-                    <VendorAddSheet className="px-4" />
+                    <Button
+                        onClick={() =>
+                            setInspectVendor({
+                                sheetTitle: 'Add Vendor',
+                                sheetDescription:
+                                    'Registering a new vendor will allow you to create purchase orders for their products.',
+                            })
+                        }
+                    >
+                        <Plus />
+                        <span>Add Vendor</span>
+                    </Button>
                 </div>
             </div>
             <TabsContent value="all">
-                <DataTable columns={vendorColumns} data={data} />
+                <DataTable<(typeof data)[number], string, typeof tableMeta>
+                    columns={vendorColumns}
+                    data={data}
+                    meta={tableMeta}
+                />
             </TabsContent>
-            <TabsContent value="pending"></TabsContent>
+            <VendorInspectSheet inspectVendor={inspectVendor} onChangeInspectVendor={setInspectVendor} />
         </Tabs>
     )
 }
