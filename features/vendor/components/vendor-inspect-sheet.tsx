@@ -1,7 +1,6 @@
 'use client'
 
 import * as React from 'react'
-import { Skeleton } from '@/components/ui/skeleton'
 import {
     Sheet,
     SheetClose,
@@ -17,24 +16,9 @@ import { CreateVendorState, UpdateVendorState } from '../types/vendor'
 import { createVendorAction, updateVendorAction } from '../actions/vendor'
 import { Loader2, Save } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { VendorFormSkeleton } from './skeleton/vendor-form-skeleton'
 
 const fetcher = (...args: Parameters<typeof fetch>) => fetch(...args).then((res) => res.json())
-
-function VendorInspectSheetSkeleton() {
-    return (
-        <div className="flex flex-col gap-6">
-            <div className="grid gap-1">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-10 w-full" />
-            </div>
-
-            <div className="grid gap-1">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-20 w-full" />
-            </div>
-        </div>
-    )
-}
 
 export interface VendorInspect {
     vendorId?: string
@@ -85,7 +69,11 @@ export function VendorUpdateForm({ vendorId }: { vendorId: string }) {
     )
 
     if (isLoading) {
-        return <VendorInspectSheetSkeleton />
+        return (
+            <div className="px-4">
+                <VendorFormSkeleton />
+            </div>
+        )
     }
 
     if (error) {
