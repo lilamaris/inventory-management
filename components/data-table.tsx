@@ -9,18 +9,20 @@ import {
     getPaginationRowModel,
     getSortedRowModel,
     SortingState,
+    TableMeta,
     useReactTable,
     VisibilityState,
 } from '@tanstack/react-table'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import * as React from 'react'
 
-export interface DataTableProps<TData, TValue> {
+export interface DataTableProps<TData, TValue, TMeta> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    meta?: TMeta
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue, TMeta extends TableMeta<TData>>({ columns, data, meta }: DataTableProps<TData, TValue, TMeta>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -43,6 +45,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
             columnVisibility,
             rowSelection,
         },
+        meta,
     })
 
     return (
