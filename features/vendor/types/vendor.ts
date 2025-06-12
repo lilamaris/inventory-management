@@ -12,3 +12,10 @@ export const createVendorSchema = z.object({
 export const updateVendorSchema = createVendorSchema.extend({
     id: z.string(),
 })
+
+export const vendorSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    description: z.string().optional(),
+    purchaseOrders: z.number().optional(),
+})

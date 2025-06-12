@@ -1,5 +1,6 @@
 import { getVendors } from '@/features/vendor/api/vendor'
-import { VendorTable, VendorTableSkeleton } from '@/features/vendor/components/vendor-table'
+import { VendorTable } from '@/features/vendor/components/vendor-table'
+import { VendorTableSkeleton } from '@/features/vendor/components/skeleton/vendor-table-skeleton'
 import { Suspense } from 'react'
 
 export default function Page() {
