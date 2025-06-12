@@ -1,4 +1,3 @@
-import { ColumnDef } from '@tanstack/react-table'
 import { z } from 'zod'
 
 export const itemSchema = z.object({
@@ -14,6 +13,6 @@ export const itemSchema = z.object({
         name: z.string(),
         description: z.string().optional(),
     }),
-    purchaseOrderCount: z.number(),
-    salesOrderCount: z.number(),
+    purchaseOrderCount: z.number().optional(),
+    salesOrderCount: z.number().optional(),
 })
