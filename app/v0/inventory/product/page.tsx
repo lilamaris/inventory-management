@@ -1,5 +1,6 @@
 import { getItems } from '@/features/item/api/item'
-import { ItemTable, ItemTableSkeleton } from '@/features/item/components/item-table'
+import { ItemTable } from '@/features/item/components/item-table'
+import { ItemTableSkeleton } from '@/features/item/components/skeleton/item-table-skeleton'
 import { auth } from '@/lib/auth'
 import { Suspense } from 'react'
 
