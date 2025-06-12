@@ -7,17 +7,18 @@ export type VendorResult = Prisma.VendorGetPayload<{
     }
 }>
 
-export async function getVendors() {
+export async function getVendors(selector?: Prisma.VendorFindManyArgs) {
     return await prisma.vendor.findMany({
+        ...selector,
         include: {
             _count: { select: { purchaseOrders: true } },
         },
     })
 }
 
-export async function getVendorUnique(selector: Prisma.VendorWhereUniqueInput) {
+export async function getVendorUnique(selector: Prisma.VendorFindUniqueArgs) {
     return await prisma.vendor.findUnique({
-        where: selector,
+        ...selector,
         include: {
             _count: { select: { purchaseOrders: true } },
         },
