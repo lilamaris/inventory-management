@@ -33,6 +33,12 @@ export async function createUser(
     return user
 }
 
+export async function checkUserExistsByEmail(email: string): Promise<boolean> {
+    const userCount = await prisma.user.count({ where: { email } })
+
+    return userCount > 0
+}
+
 export async function getUserByEmail(email: string): Promise<User | null> {
     const user = await prisma.user.findUnique({
         where: { email },

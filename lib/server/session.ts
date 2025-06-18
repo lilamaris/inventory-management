@@ -35,7 +35,8 @@ export async function invalidateUserSessions(userId: string) {
 }
 
 export async function setSessionTokenToCookie(token: string, expiresAt: Date): Promise<void> {
-    ;(await cookies()).set(SESSION_COOKIE_NAME, token, {
+    const cookieStore = await cookies()
+    cookieStore.set(SESSION_COOKIE_NAME, token, {
         httpOnly: true,
         path: '/',
         secure: process.env.NODE_ENV === 'production',
@@ -45,7 +46,8 @@ export async function setSessionTokenToCookie(token: string, expiresAt: Date): P
 }
 
 export async function deleteSessionTokenCookie(): Promise<void> {
-    ;(await cookies()).set(SESSION_COOKIE_NAME, VOID_STRING, {
+    const cookieStore = await cookies()
+    cookieStore.set(SESSION_COOKIE_NAME, VOID_STRING, {
         httpOnly: true,
         path: '/',
         secure: process.env.NODE_ENV === 'production',
@@ -93,3 +95,16 @@ export const getCurrentSession = cache(async (): Promise<SessionValidateResult> 
     if (!token) return { user: null, session: null }
     return validateSessionToken(token)
 })
+
+export async function createSession(token: string, userId: string): Promise<Session> {
+    const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)))
+    const session = await prisma.session.create({
+        data: {
+            id: sessionId,
+            userId,
+            expiresAt: new Date(Date.now() + SESSION_EXPIRATION_TIME),
+        },
+    })
+
+    return session
+}
