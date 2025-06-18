@@ -1,5 +1,8 @@
 onlyBuiltDependencies:
-    - esbuild
-    - '@tailwindcss/oxide'
-    - sharp
-    - unrs-resolver
+  - '@prisma/client'
+  - '@prisma/engines'
+  - '@tailwindcss/oxide'
+  - esbuild
+  - prisma
+  - sharp
+  - unrs-resolver
