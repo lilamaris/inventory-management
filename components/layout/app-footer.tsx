@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { Button } from '../ui/button'
 
-export function AppFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export default function AppFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
     return (
         <footer
             className={cn('flex h-(--header-height) overflow-hidden shrink-0 items-center gap-2 border-t', className)}

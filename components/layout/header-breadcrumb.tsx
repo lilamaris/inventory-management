@@ -51,14 +51,14 @@ function renderBreadcrumb(breadcrumb: RouteNode, isLast: boolean) {
     )
 }
 
-export function HeaderBreadcrumb() {
+export default function HeaderBreadcrumb() {
     const breadcrumbs = useBreadcrumbs()
 
     return (
         <Breadcrumb>
             <BreadcrumbList>
                 {breadcrumbs.map((breadcrumb, index) => (
-                    <Fragment key={`${breadcrumb.id}`}>
+                    <Fragment key={breadcrumb.id}>
                         <BreadcrumbItem>
                             {renderBreadcrumb(breadcrumb, index === breadcrumbs.length - 1)}
                         </BreadcrumbItem>

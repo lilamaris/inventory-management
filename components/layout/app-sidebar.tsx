@@ -13,13 +13,14 @@ import {
 } from '@/components/ui/sidebar'
 import Link from 'next/link'
 import { ChevronRight, GalleryVerticalEnd, LogOut, Minus, Plus } from 'lucide-react'
-import { auth } from '@/lib/auth'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@radix-ui/react-collapsible'
 import { cn } from '@/lib/utils'
 
 import { routeTree, type RouteNode } from '@/config/routeTree'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { appMeta } from '@/config/app'
+import { getCurrentSession } from '@/lib/server/session'
+import Image from 'next/image'
 
 function renderCollapsibleRoute(route: RouteNode) {
     if (route.subRoutes) {
@@ -118,8 +119,8 @@ function renderSecondaryRouteTree(routeTree: RouteNode[]) {
     )
 }
 
-export async function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-    const session = await auth()
+export default async function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+    const { session, user } = await getCurrentSession()
 
     const navMain = Object.values(routeTree).filter((tree) => !['settings', 'help'].includes(tree.id))
     const navSettings = Object.values(routeTree).filter((tree) => ['settings', 'help'].includes(tree.id))
@@ -152,14 +153,14 @@ export async function AppSidebar({ ...props }: React.ComponentProps<typeof Sideb
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
                             <Link href="/auth/profile">
-                                <img
-                                    src={session?.user?.image || '#'}
-                                    alt="Profile"
-                                    className="bg-white size-8 rounded-full"
-                                />
+                                {user?.avatarUrl ? (
+                                    <Image src={user.avatarUrl} alt="Avatar" className="bg-white size-8 rounded-full" />
+                                ) : (
+                                    <div>Nothing here</div>
+                                )}
                                 <div className="flex flex-col gap-0.5 leading-none">
-                                    <span className="font-medium">{session?.user?.name}</span>
-                                    <span className="text-muted-foreground">{session?.user?.email}</span>
+                                    <span className="font-medium">{user?.name}</span>
+                                    <span className="text-muted-foreground">{user?.email}</span>
                                 </div>
                             </Link>
                         </SidebarMenuButton>
