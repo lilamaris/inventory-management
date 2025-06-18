@@ -53,5 +53,5 @@ export default async function signupAction(state: ActionState<typeof signupSchem
         expires: session.expiresAt,
     })
 
-    return redirect('/')
+    return redirect('/console')
 }

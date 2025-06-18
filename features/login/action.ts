@@ -44,5 +44,5 @@ export default async function loginAction(state: ActionState<typeof loginSchema>
         expires: session.expiresAt,
     })
 
-    redirect('/console')
+    return redirect('/console')
 }
