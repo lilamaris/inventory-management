@@ -23,8 +23,6 @@ export interface Session {
 }
 
 const SESSION_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 15 // 15 days
-const SESSION_COOKIE_NAME = 'session'
-const VOID_STRING = ''
 
 export async function invalidateSession(sessionId: string) {
     await prisma.session.delete({ where: { id: sessionId } })
