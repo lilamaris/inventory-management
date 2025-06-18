@@ -1,3 +1,4 @@
+import ThemeProvider from '@/components/ui/theme-provider'
 import type { Metadata } from 'next'
 import './globals.css'
 
@@ -13,7 +14,11 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="ko">
-            <body>{children}</body>
+            <body>
+                <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                    {children}
+                </ThemeProvider>
+            </body>
         </html>
     )
 }
