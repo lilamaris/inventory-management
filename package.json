@@ -7,7 +7,8 @@
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
-        "test": "vitest"
+        "test": "vitest",
+        "prepare": "husky install"
     },
     "dependencies": {
         "@node-rs/argon2": "^2.0.2",
@@ -37,6 +38,7 @@
         "tsx": "^4.20.3",
         "typescript": "^5",
         "vite-tsconfig-paths": "^5.1.4",
-        "vitest": "^3.2.4"
+        "vitest": "^3.2.4",
+        "husky": "^8.0.0"
     }
 }
