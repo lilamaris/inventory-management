@@ -28,9 +28,8 @@ const prisma =
 
 // 쿼리 로깅 이벤트 리스너
 prisma.$on('query', (e: any) => {
-    console.log('Query: ' + e.query)
-    console.log('Params: ' + e.params)
-    console.log('Duration: ' + e.duration + 'ms')
+    const queryMessage = `Query: ${e.query} Params: ${e.params} Duration: ${e.duration}ms`
+    console.log(queryMessage)
 })
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
