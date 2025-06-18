@@ -1,4 +1,5 @@
 onlyBuiltDependencies:
-  - '@tailwindcss/oxide'
-  - sharp
-  - unrs-resolver
+    - esbuild
+    - '@tailwindcss/oxide'
+    - sharp
+    - unrs-resolver
