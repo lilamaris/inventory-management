@@ -13,8 +13,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { ChevronDown, SlashIcon } from 'lucide-react'
 import type { RouteNode } from '@/config/routeTree'
 import { Fragment } from 'react'
-import { Button } from '../ui/button'
 import { appMeta } from '@/config/app'
+import { Button } from '@/components/ui/button'
 
 function subrouteBreadcrumb(breadcrumb: RouteNode) {
     return (
