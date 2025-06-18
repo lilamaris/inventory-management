@@ -1,19 +1,11 @@
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
 import { Package2Icon } from 'lucide-react'
 
-import { getCurrentSession } from '@/lib/server/session'
-
-import SignupForm from '@/features/signup/components/signup-form'
 import { appMeta } from '@/config/app'
 import TermsAndService from '@/components/auth-terms-and-service'
+import LoginForm from '@/features/login/components/login-form'
 
 export default async function Page() {
-    const { session } = await getCurrentSession()
-    if (session !== null) {
-        return redirect('/auth/login')
-    }
-
     return (
         <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
             <div className="flex w-full max-w-sm flex-col gap-6">
@@ -26,7 +18,7 @@ export default async function Page() {
                     </Link>
                 </header>
                 <main className="flex flex-col gap-6">
-                    <SignupForm />
+                    <LoginForm />
                     <TermsAndService />
                 </main>
             </div>

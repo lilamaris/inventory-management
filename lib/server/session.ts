@@ -34,28 +34,6 @@ export async function invalidateUserSessions(userId: string) {
     await prisma.session.deleteMany({ where: { userId } })
 }
 
-export async function setSessionTokenToCookie(token: string, expiresAt: Date): Promise<void> {
-    const cookieStore = await cookies()
-    cookieStore.set(SESSION_COOKIE_NAME, token, {
-        httpOnly: true,
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        expires: expiresAt,
-    })
-}
-
-export async function deleteSessionTokenCookie(): Promise<void> {
-    const cookieStore = await cookies()
-    cookieStore.set(SESSION_COOKIE_NAME, VOID_STRING, {
-        httpOnly: true,
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        expires: new Date(0),
-    })
-}
-
 export function generateSessionToken(): string {
     const tokenBytes = new Uint8Array(32)
     crypto.getRandomValues(tokenBytes)

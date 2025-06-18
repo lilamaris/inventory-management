@@ -8,6 +8,6 @@ export interface AppMeta {
 export const appMeta: AppMeta = {
     versionRoutePrefix: '/console',
     version: '0.0.1',
-    name: 'Inventory Inc.',
-    description: 'Inventory Inc. is a simple inventory management system.',
+    name: 'Package Inc.',
+    description: 'Package Inc. is a simple package management system.',
 }

@@ -1,5 +1,6 @@
-import { ActionState } from '@/lib/type'
 import { z } from 'zod'
+
+import { ActionState } from '@/lib/type'
 
 export const signupSchema = z
     .object({

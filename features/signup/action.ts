@@ -1,10 +1,12 @@
 'use server'
 
+import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+
 import { AuthType } from '@/generated/prisma'
 
 import { createAccount, type CreateAccountParams, isUserHasAuthType } from '@/lib/server/account'
-import { createSession, generateSessionToken, setSessionTokenToCookie } from '@/lib/server/session'
+import { createSession, generateSessionToken } from '@/lib/server/session'
 import { createUser, getUserByEmail } from '@/lib/server/user'
 import { ActionState } from '@/lib/type'
 
@@ -12,7 +14,6 @@ import { signupSchema } from '@/features/signup/type'
 
 export default async function signupAction(state: ActionState<typeof signupSchema>, formData: FormData) {
     const form = Object.fromEntries(formData)
-
     const validatedFields = signupSchema.safeParse(form)
 
     if (!validatedFields.success) {
@@ -44,7 +45,13 @@ export default async function signupAction(state: ActionState<typeof signupSchem
 
     const sessionToken = generateSessionToken()
     const session = await createSession(sessionToken, user.id)
-    setSessionTokenToCookie(sessionToken, session.expiresAt)
+    ;(await cookies()).set('session', sessionToken, {
+        httpOnly: true,
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        expires: session.expiresAt,
+    })
 
     return redirect('/')
 }

@@ -24,7 +24,7 @@ export type CreateAccountParams = CredentialsAccountParams | OAuthAccountParams
 export function createAccount(params: CredentialsAccountParams): Promise<Account>
 export function createAccount(params: OAuthAccountParams): Promise<Account>
 
-export async function createAccount(params: CreateAccountParams) {
+export async function createAccount(params: CreateAccountParams): Promise<Account> {
     let passwordHash: string | null = null
     let providerId: string
 
@@ -46,7 +46,18 @@ export async function createAccount(params: CreateAccountParams) {
     return account
 }
 
-export async function isUserHasAuthType(authType: AuthType, userId: string) {
+export async function getPasswordHashByUserId(userId: string): Promise<string | null> {
+    const authType = AuthType.CREDENTIALS
+
+    const passwordHash = await prisma.account.findFirst({
+        where: { userId, authType },
+        select: { passwordHash: true },
+    })
+
+    return passwordHash?.passwordHash ?? null
+}
+
+export async function isUserHasAuthType(authType: AuthType, userId: string): Promise<boolean> {
     const authCount = await prisma.account.count({ where: { authType, userId } })
     return authCount > 0
 }
