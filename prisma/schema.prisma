@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  VIEWER
+  MANAGER
+  ADMIN
+}
+
+enum AuthType {
+  GOOGLE
+  GITHUB
+  CREDENTIALS
+}
+
+model Account {
+  id           String       @id @default(uuid())
+  providerId   String
+  authType     AuthType
+  userId       String
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  passwordHash String?
+
+  @@unique([providerId, authType])
+}
+
+model Session {
+  id        String   @id @default(uuid())
+
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserRole {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  role Role
+
+  @@unique([userId, role])
+}
+
+model User {
+  id        String  @id @default(uuid())
+  name      String
+  email     String  @unique
+  avatarUrl String?
+
+  emailVerifiedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  accounts Account[]
+  sessions Session[]
+  roles    UserRole[]
+}
