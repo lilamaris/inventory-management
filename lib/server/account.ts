@@ -46,6 +46,11 @@ export async function createAccount(params: CreateAccountParams): Promise<Accoun
     return account
 }
 
+export async function getAccountByProviderId(providerId: string, authType: AuthType): Promise<Account | null> {
+    const account = await prisma.account.findFirst({ where: { providerId, authType } })
+    return account
+}
+
 export async function getPasswordHashByUserId(userId: string): Promise<string | null> {
     const authType = AuthType.CREDENTIALS
 
