@@ -1,6 +1,6 @@
 import prisma from '@/lib/prisma'
 import { sha256 } from '@oslojs/crypto/sha2'
-import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from '@oslojs/encoding'
+import * as oslo_encoding from '@oslojs/encoding'
 import { cookies } from 'next/headers'
 import { cache } from 'react'
 
@@ -18,6 +18,7 @@ type SessionValidateResult =
 
 export interface Session {
     id: string
+    createdAt: Date
     expiresAt: Date
     userId: string
 }
@@ -35,13 +36,13 @@ export async function invalidateUserSessions(userId: string) {
 export function generateSessionToken(): string {
     const tokenBytes = new Uint8Array(32)
     crypto.getRandomValues(tokenBytes)
-    const token = encodeBase32LowerCaseNoPadding(tokenBytes).toLowerCase()
+    const token = oslo_encoding.encodeBase32LowerCaseNoPadding(tokenBytes).toLowerCase()
     return token
 }
 
 export async function validateSessionToken(token: string): Promise<SessionValidateResult> {
     const now = Date.now()
-    const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)))
+    const sessionId = oslo_encoding.encodeHexLowerCase(sha256(new TextEncoder().encode(token)))
 
     const session = await prisma.session.findUnique({
         where: { id: sessionId },
@@ -73,7 +74,7 @@ export const getCurrentSession = cache(async (): Promise<SessionValidateResult> 
 })
 
 export async function createSession(token: string, userId: string): Promise<Session> {
-    const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)))
+    const sessionId = oslo_encoding.encodeHexLowerCase(sha256(new TextEncoder().encode(token)))
     const session = await prisma.session.create({
         data: {
             id: sessionId,

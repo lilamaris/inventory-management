@@ -1,12 +1,12 @@
 import type { OAuth2Tokens } from 'arctic'
+import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 
-import github, { getUser, getUserEmail } from '@/lib/server/oauth-github'
-import { createAccount, getAccountByProviderId } from '@/lib/server/account'
 import { AuthType } from '@/generated/prisma/client'
-import { createUser, getUserByEmail } from '@/lib/server/user'
-import { redirect } from 'next/navigation'
+import { createAccount, getAccountByProviderId } from '@/lib/server/account'
 import { createSession, generateSessionToken } from '@/lib/server/session'
+import { createUser, getUserByEmail } from '@/lib/server/user'
+import github, { getUser, getUserEmail } from '@/lib/server/oauth-github'
 
 export async function GET(request: Request): Promise<Response> {
     const url = new URL(request.url)
