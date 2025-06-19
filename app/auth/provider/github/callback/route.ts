@@ -58,5 +58,5 @@ export async function GET(request: Request): Promise<Response> {
         expires: session.expiresAt,
     })
 
-    return redirect('/')
+    return new Response(null, { status: 302, headers: { Location: '/console' } })
 }
