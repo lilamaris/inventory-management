@@ -27,18 +27,18 @@ enum AuthType {
 }
 
 model Account {
-  id           String       @id @default(uuid())
+  id           String   @id @default(uuid())
   providerId   String
   authType     AuthType
   userId       String
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   passwordHash String?
 
   @@unique([providerId, authType])
 }
 
 model Session {
-  id        String   @id @default(uuid())
+  id String @id @default(uuid())
 
   createdAt DateTime @default(now())
   expiresAt DateTime
@@ -66,11 +66,63 @@ model User {
   avatarUrl String?
 
   emailVerifiedAt DateTime?
+  secretAccessToken String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  accounts Account[]
-  sessions Session[]
-  roles    UserRole[]
+  accounts  Account[]
+  sessions  Session[]
+  roles     UserRole[]
+  ownVendor Vendor[]
+}
+
+model Vendor {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ownerId String
+  owner   User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  items   VendorItem[]
+}
+
+model Item {
+  id          String  @id @default(uuid())
+  sku         String  @unique
+  name        String
+  description String?
+
+  vendors VendorItem[]
+}
+
+model VendorCategory {
+  id   String @id @default(uuid())
+  name String
+
+  items VendorItem[]
+}
+
+model VendorItem {
+  id String @id @default(uuid())
+
+  quantity Int
+  price    Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  categoryId String?
+  category   VendorCategory? @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  vendorId String
+  vendor   Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  itemId String
+  item   Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([vendorId, itemId])
 }
