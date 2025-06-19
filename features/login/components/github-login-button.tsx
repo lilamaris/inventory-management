@@ -1,11 +1,9 @@
-import Link from 'next/link'
-
 import { Button } from '@/components/ui/button'
 
 export default function GithubLoginButton() {
     return (
         <Button variant="outline" className="w-full" asChild>
-            <Link href="/auth/provider/github">
+            <a href="/auth/provider/github">
                 <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path
                         fill="currentColor"
@@ -13,7 +11,7 @@ export default function GithubLoginButton() {
                     />
                 </svg>
                 Login with Github
-            </Link>
+            </a>
         </Button>
     )
 }
