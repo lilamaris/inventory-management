@@ -1,5 +1,6 @@
-import { Prisma, VendorItem } from '@/generated/prisma'
 import prisma from '@/lib/prisma'
+
+import { Listing, UpdateListing, VendorItem } from '@/features/vendor/type'
 
 export class VendorItemError extends Error {
     constructor(message: string) {
@@ -29,7 +30,7 @@ export async function getListing(vendorId: string): Promise<VendorItem[]> {
     return vendorItems
 }
 
-export async function updateListing(params: UpdateListingParams): Promise<VendorItem> {
+export async function updateListing(params: UpdateListing): Promise<VendorItem> {
     const { vendorId, sku, name, description, quantity, price } = params
 
     const vendorItem = await prisma.vendorItem.update({
@@ -45,7 +46,7 @@ export async function updateListing(params: UpdateListingParams): Promise<Vendor
     return vendorItem
 }
 
-export async function listingItem(params: ListingParams): Promise<VendorItem> {
+export async function listingItem(params: Listing): Promise<VendorItem> {
     const { vendorId, sku: possiblyNullSku, name, description, quantity, price } = params
 
     const sku = possiblyNullSku ?? generateSKU(name)
@@ -63,23 +64,4 @@ export async function unlistingItem(vendorId: string, sku: string): Promise<void
     await prisma.vendorItem.delete({
         where: { vendorId_sku: { vendorId, sku } },
     })
-}
-
-export interface ItemCommonParams {
-    sku: string | null
-    name: string
-    description: string | null
-}
-
-export interface ListingParams extends ItemCommonParams {
-    vendorId: string
-    quantity: number
-    price: number
-}
-
-export interface UpdateListingParams extends Partial<ItemCommonParams> {
-    sku: string
-    vendorId: string
-    quantity: number
-    price: number
 }
