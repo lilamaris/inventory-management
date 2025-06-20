@@ -161,7 +161,8 @@ model PurchaseOrder {
   vendorId String
   vendor   Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
 
-  items        PurchaseOrderItem[]
+  items          PurchaseOrderItem[]
+  status         PurchaseOrderStatus @default(PENDING)
   transactions PurchaseOrderTransaction[]
 }
 
@@ -173,6 +174,7 @@ model PurchaseOrderTransaction {
   purchaseOrderId String
   purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
 
+  previousStatus   PurchaseOrderStatus
   status           PurchaseOrderStatus
   updatedManagerId String
   updatedManager   VendorManager       @relation(fields: [updatedManagerId], references: [id], onDelete: Cascade)
@@ -180,16 +182,14 @@ model PurchaseOrderTransaction {
 
 model PurchaseOrderItem {
   id String @id @default(uuid())
+  quantity Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   purchaseOrderId String
   purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
-
-  quantity Int
-  price    Int
-
+  
   vendorItemId String
   vendorItem   VendorItem @relation(fields: [vendorItemId], references: [id], onDelete: Cascade)
 }
