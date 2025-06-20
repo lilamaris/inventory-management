@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server'
+
 import {
     getListing,
     listingItem,
@@ -7,20 +8,18 @@ import {
     VendorItemError,
 } from '@/features/vendor/service/listing'
 
-export async function GET(
-    request: NextRequest,
-    { params }: { params: Promise<{ vendorId: string }> },
-): Promise<NextResponse> {
+interface PathParams {
+    params: Promise<{ vendorId: string }>
+}
+
+export async function GET(request: NextRequest, { params }: PathParams): Promise<NextResponse> {
     const { vendorId } = await params
 
     const items = await getListing(vendorId)
     return NextResponse.json(items)
 }
 
-export async function POST(
-    request: NextRequest,
-    { params }: { params: Promise<{ vendorId: string }> },
-): Promise<NextResponse> {
+export async function POST(request: NextRequest, { params }: PathParams): Promise<NextResponse> {
     const { vendorId } = await params
     const { sku, name, description, price, quantity } = await request.json()
 
@@ -43,10 +42,7 @@ export async function POST(
     return NextResponse.json({ status: 'success' })
 }
 
-export async function PUT(
-    request: NextRequest,
-    { params }: { params: Promise<{ vendorId: string }> },
-): Promise<NextResponse> {
+export async function PUT(request: NextRequest, { params }: PathParams): Promise<NextResponse> {
     const { vendorId } = await params
     const { sku, name, description, price, quantity } = await request.json()
 
@@ -69,10 +65,7 @@ export async function PUT(
     return NextResponse.json({ status: 'success' })
 }
 
-export async function DELETE(
-    request: NextRequest,
-    { params }: { params: Promise<{ vendorId: string }> },
-): Promise<NextResponse> {
+export async function DELETE(request: NextRequest, { params }: PathParams): Promise<NextResponse> {
     const { vendorId } = await params
     const { sku } = await request.json()
 
