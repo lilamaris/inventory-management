@@ -65,16 +65,37 @@ model User {
   email     String  @unique
   avatarUrl String?
 
-  emailVerifiedAt DateTime?
+  emailVerifiedAt   DateTime?
   secretAccessToken String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  accounts  Account[]
-  sessions  Session[]
-  roles     UserRole[]
-  ownVendor Vendor[]
+  accounts       Account[]
+  sessions       Session[]
+  roles          UserRole[]
+  purchaseOrders PurchaseOrder[]
+
+  manageVendor VendorManager[]
+}
+
+model VendorManager {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  isOwner Boolean @default(false)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  vendorId String
+  vendor   Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  transactions PurchaseOrderTransaction[]
+
+  @@unique([userId, vendorId])
 }
 
 model Vendor {
@@ -85,18 +106,10 @@ model Vendor {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  ownerId String
-  owner   User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  items   VendorItem[]
-}
+  items    VendorItem[]
+  managers VendorManager[]
 
-model Item {
-  id          String  @id @default(uuid())
-  sku         String  @unique
-  name        String
-  description String?
-
-  vendors VendorItem[]
+  purchaseOrders PurchaseOrder[]
 }
 
 model VendorCategory {
@@ -107,10 +120,12 @@ model VendorCategory {
 }
 
 model VendorItem {
-  id String @id @default(uuid())
-
-  quantity Int
-  price    Int
+  id          String  @id @default(uuid())
+  sku         String  @unique
+  name        String
+  description String?
+  quantity    Int
+  price       Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -121,8 +136,60 @@ model VendorItem {
   vendorId String
   vendor   Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
 
-  itemId String
-  item   Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  purchaseOrderItems PurchaseOrderItem[]
 
-  @@unique([vendorId, itemId])
+  @@unique([vendorId, sku])
+}
+
+enum PurchaseOrderStatus {
+  PENDING
+  REJECTED
+  CANCELLED
+  APPROVED
+  DELIVERED
+}
+
+model PurchaseOrder {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orderByUserId String
+  orderByUser   User   @relation(fields: [orderByUserId], references: [id], onDelete: Cascade)
+
+  vendorId String
+  vendor   Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  items        PurchaseOrderItem[]
+  transactions PurchaseOrderTransaction[]
+}
+
+model PurchaseOrderTransaction {
+  id String @id @default(uuid())
+
+  transactionAt DateTime @default(now())
+
+  purchaseOrderId String
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+
+  status           PurchaseOrderStatus
+  updatedManagerId String
+  updatedManager   VendorManager       @relation(fields: [updatedManagerId], references: [id], onDelete: Cascade)
+}
+
+model PurchaseOrderItem {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  purchaseOrderId String
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+
+  quantity Int
+  price    Int
+
+  vendorItemId String
+  vendorItem   VendorItem @relation(fields: [vendorItemId], references: [id], onDelete: Cascade)
 }

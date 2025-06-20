@@ -1,27 +1,32 @@
-import { NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import {
-    getVendorItem,
+    getListing,
     listingItem,
     unlistingItem,
-    updateVendorItem,
+    updateListing,
     VendorItemError,
-} from '@/features/vendor/service/vendorItem'
+} from '@/features/vendor/service/listing'
 
-export async function GET(request: Request, { params }: { params: Promise<{ vendorId: string }> }): Promise<Response> {
+export async function GET(
+    request: NextRequest,
+    { params }: { params: Promise<{ vendorId: string }> },
+): Promise<NextResponse> {
     const { vendorId } = await params
-    const items = await getVendorItem({ vendorId })
+
+    const items = await getListing(vendorId)
     return NextResponse.json(items)
 }
 
-export async function POST(request: Request, { params }: { params: Promise<{ vendorId: string }> }): Promise<Response> {
+export async function POST(
+    request: NextRequest,
+    { params }: { params: Promise<{ vendorId: string }> },
+): Promise<NextResponse> {
     const { vendorId } = await params
-
     const { sku, name, description, price, quantity } = await request.json()
 
     try {
         await listingItem({
             vendorId,
-            mode: 'new',
             sku,
             name,
             description,
@@ -38,18 +43,22 @@ export async function POST(request: Request, { params }: { params: Promise<{ ven
     return NextResponse.json({ status: 'success' })
 }
 
-export async function PUT(request: Request, { params }: { params: Promise<{ vendorId: string }> }): Promise<Response> {
+export async function PUT(
+    request: NextRequest,
+    { params }: { params: Promise<{ vendorId: string }> },
+): Promise<NextResponse> {
     const { vendorId } = await params
-    const { itemId, price, quantity } = await request.json()
+    const { sku, name, description, price, quantity } = await request.json()
 
     try {
-        await updateVendorItem(
-            {
-                vendorId_itemId: { vendorId, itemId },
-            },
+        await updateListing({
+            vendorId,
+            sku,
+            name,
+            description,
             price,
             quantity,
-        )
+        })
     } catch (error) {
         if (error instanceof VendorItemError) {
             return NextResponse.json({ error: error.message }, { status: 400 })
@@ -61,15 +70,14 @@ export async function PUT(request: Request, { params }: { params: Promise<{ vend
 }
 
 export async function DELETE(
-    request: Request,
+    request: NextRequest,
     { params }: { params: Promise<{ vendorId: string }> },
-): Promise<Response> {
+): Promise<NextResponse> {
     const { vendorId } = await params
-
-    const { itemId } = await request.json()
+    const { sku } = await request.json()
 
     try {
-        await unlistingItem(vendorId, itemId)
+        await unlistingItem(vendorId, sku)
     } catch (error) {
         if (error instanceof VendorItemError) {
             return NextResponse.json({ error: error.message }, { status: 400 })
