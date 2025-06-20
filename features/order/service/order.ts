@@ -31,6 +31,7 @@ export async function getPurchaseOrders(params: PurchaseOrderParams): Promise<Or
                         select: {
                             id: true,
                             name: true,
+                            price: true,
                         },
                     },
                 },
