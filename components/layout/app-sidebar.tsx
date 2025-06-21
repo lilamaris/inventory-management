@@ -22,7 +22,7 @@ import { appMeta } from '@/config/app'
 import { getCurrentSession } from '@/lib/server/session'
 import Image from 'next/image'
 import { redirect } from 'next/navigation'
-import { getOwnVendor } from '@/features/vendor/service/ownership'
+import { getOwnVendor } from '@/features/vendorManager/service/ownership'
 
 function renderCollapsibleRoute(route: RouteNode) {
     if (route.subRoutes) {

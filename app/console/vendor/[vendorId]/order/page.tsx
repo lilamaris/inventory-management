@@ -1,12 +1,14 @@
 import { redirect } from 'next/navigation'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-
 import { getCurrentSession } from '@/lib/server/session'
-import OrderCard from '@/features/order/components/order-card'
-import { isVendorOwner } from '@/features/vendor/service/ownership'
-import { getPurchaseOrders } from '@/features/order/service/order'
+import { isVendorOwner } from '@/features/vendorManager/service/ownership'
+import { getOrders } from '@/features/order/service/order'
 import { getVendorById } from '@/features/vendor/service/vendor'
+import OrderRecipe from '@/features/order/components/order-recipe'
+import VendorOrderAction from '@/features/order/components/vendor-order-action'
+import VendorOrderDescription from '@/features/order/components/vendor-order-description'
+import { Order } from '@/features/order/type'
+import OrderItems from '@/features/order/components/order-items'
 
 export default async function VendorOrderPage({ params }: { params: Promise<{ vendorId: string }> }) {
     const { vendorId } = await params
@@ -24,28 +26,24 @@ export default async function VendorOrderPage({ params }: { params: Promise<{ ve
     if (!vendor) {
         redirect('/console')
     }
-    const orders = await getPurchaseOrders({ vendorId })
-    const pendingOrders = orders.filter((order) => order.status === 'PENDING')
+    const orders = await getOrders({ vendorId })
+
+    const description = (order: Order) => (
+        <VendorOrderDescription orderAt={order.createdAt} orderFromName={order.orderByUser.name} />
+    )
+    const action = (order: Order) => (
+        <VendorOrderAction vendorId={order.vendorId} orderId={order.id} orderStatus={order.status} />
+    )
 
     return (
-        <>
-            <h1>Your Vendor List</h1>
-            <Card className="flex flex-col gap-2 w-full">
-                <CardHeader>
-                    <CardTitle>{vendor.name}</CardTitle>
-                    <CardDescription>{vendor.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex flex-col gap-2">
-                        <h1>Pending Orders</h1>
-                        <div className="flex flex-col gap-2">
-                            {pendingOrders.map((order, index) => (
-                                <OrderCard key={order.id} order={order} index={index} />
-                            ))}
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-        </>
+        <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2">
+                {orders.map((order, index) => (
+                    <OrderRecipe key={order.id} order={order} index={index} description={description} action={action}>
+                        <OrderItems items={order.items} />
+                    </OrderRecipe>
+                ))}
+            </div>
+        </div>
     )
 }
