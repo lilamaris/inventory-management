@@ -24,9 +24,5 @@ export const isVendorOwner = async (userId: string, vendorId: string) => {
         },
     })
 
-    console.log('userId:', userId)
-    console.log('vendorId:', vendorId)
-    console.log('vendorManager:', vendorManager)
-
     return vendorManager?.isOwner ?? false
 }
