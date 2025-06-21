@@ -1,13 +1,11 @@
-export interface VendorOrderDescriptionProps {
-    orderFromName: string
-    orderAt: Date
-}
+import { Order } from '@/features/order/type'
+import { formatTime } from '@/lib/utils'
 
-export default function VendorOrderDescription({ orderFromName, orderAt }: VendorOrderDescriptionProps) {
+export default function VendorOrderDescription({ order }: { order: Order }) {
     return (
         <div>
-            <p>Order from {orderFromName}</p>
-            <p>Order at {orderAt.toLocaleDateString()}</p>
+            <p>Order from {order.orderByUser.name}</p>
+            <p>Order at {formatTime(order.createdAt)}</p>
         </div>
     )
 }
