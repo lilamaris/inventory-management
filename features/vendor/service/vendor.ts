@@ -37,3 +37,36 @@ export async function getVendorWithManagersById(id: string) {
 
     return vendor
 }
+
+export async function getVendorItems(vendorId: string) {
+    const items = await prisma.vendorItem.findMany({
+        where: {
+            vendorId,
+        },
+    })
+
+    return items
+}
+
+export async function getVendorItemQuantityByManyId(vendorId: string, itemIds: string[]) {
+    const items = await prisma.vendorItem.findMany({
+        where: {
+            id: {
+                in: itemIds,
+            },
+            vendorId,
+        },
+        select: {
+            id: true,
+            quantity: true,
+        },
+    })
+
+    return items.reduce(
+        (acc, item) => {
+            acc[item.id] = item.quantity
+            return acc
+        },
+        {} as Record<string, number>,
+    )
+}
