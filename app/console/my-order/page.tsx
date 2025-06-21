@@ -16,12 +16,8 @@ export default async function MyOrderPage() {
 
     const orders = await getOrders({ userId: user.id })
 
-    const description = (order: Order) => (
-        <UserOrderDescription orderAt={order.createdAt} orderToName={order.vendor.name} />
-    )
-    const action = (order: Order) => (
-        <UserOrderAction vendorId={order.vendorId} orderId={order.id} orderStatus={order.status} />
-    )
+    const description = (order: Order) => <UserOrderDescription order={order} />
+    const action = (order: Order) => <UserOrderAction order={order} />
 
     return (
         <>
