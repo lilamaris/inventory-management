@@ -12,7 +12,7 @@ import {
     SidebarMenuSub,
 } from '@/components/ui/sidebar'
 import Link from 'next/link'
-import { ChevronRight, GalleryVerticalEnd, LogOut, Minus, Plus } from 'lucide-react'
+import { ChevronRight, ClipboardList, GalleryVerticalEnd, LogOut, Minus, Plus, Store } from 'lucide-react'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@radix-ui/react-collapsible'
 import { cn } from '@/lib/utils'
 
@@ -21,12 +21,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { appMeta } from '@/config/app'
 import { getCurrentSession } from '@/lib/server/session'
 import Image from 'next/image'
+import { redirect } from 'next/navigation'
+import { getOwnVendor } from '@/features/vendor/service/ownership'
 
 function renderCollapsibleRoute(route: RouteNode) {
     if (route.subRoutes) {
         return (
             <SidebarMenu key={route.id}>
-                <Collapsible className="group/collapsible" defaultOpen={true}>
+                <Collapsible className="group/collapsible" defaultOpen>
                     <SidebarMenuItem>
                         <CollapsibleTrigger asChild>
                             <SidebarMenuButton>
@@ -41,7 +43,7 @@ function renderCollapsibleRoute(route: RouteNode) {
                                 'text-popover-foreground outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
                             )}
                         >
-                            <SidebarMenuSub>
+                            <SidebarMenuSub className="mr-0 pr-0">
                                 {route.subRoutes.map((subRoute) => (
                                     <SidebarMenuItem key={subRoute.id}>
                                         {renderCollapsibleRoute(subRoute)}
@@ -55,7 +57,7 @@ function renderCollapsibleRoute(route: RouteNode) {
         )
     }
     return (
-        <SidebarMenuButton asChild>
+        <SidebarMenuButton key={route.id} asChild>
             <Link href={route.href ? `${appMeta.versionRoutePrefix}${route.href}` : '#'}>
                 {route.icon && React.createElement(route.icon, { className: 'size-4' })}
                 {route.label}
@@ -103,27 +105,39 @@ function renderDropdownRoute(route: RouteNode) {
     )
 }
 
-function renderMainRouteTree(routeTree: RouteNode[]) {
-    return (
-        <SidebarGroup>
-            <SidebarGroupContent>{routeTree.map((route) => renderCollapsibleRoute(route))}</SidebarGroupContent>
-        </SidebarGroup>
-    )
-}
-
-function renderSecondaryRouteTree(routeTree: RouteNode[]) {
-    return (
-        <SidebarGroup className="mt-auto">
-            <SidebarGroupContent>{routeTree.map((route) => renderDropdownRoute(route))}</SidebarGroupContent>
-        </SidebarGroup>
-    )
-}
-
 export default async function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const { session, user } = await getCurrentSession()
-
-    const navMain = Object.values(routeTree).filter((tree) => !['settings', 'help'].includes(tree.id))
+    if (!session || !user) {
+        redirect('/auth/login')
+    }
+    const vendors = await getOwnVendor(user.id)
     const navSettings = Object.values(routeTree).filter((tree) => ['settings', 'help'].includes(tree.id))
+    const navMain = Object.values(routeTree).filter((tree) => !['settings', 'help'].includes(tree.id))
+
+    navMain.push({
+        id: 'vendor',
+        label: 'Vendor',
+        icon: Store,
+        subRoutes: vendors.map((vendor) => ({
+            id: vendor.id,
+            label: vendor.name,
+            icon: Store,
+            subRoutes: [
+                {
+                    id: 'store',
+                    label: 'Store',
+                    icon: Store,
+                    href: `/vendor/${vendor.id}`,
+                },
+                {
+                    id: 'order',
+                    label: 'Order',
+                    icon: ClipboardList,
+                    href: `/vendor/${vendor.id}/order`,
+                },
+            ],
+        })),
+    })
 
     return (
         <Sidebar className={cn(props.className, 'select-none')} {...props}>
@@ -145,8 +159,12 @@ export default async function AppSidebar({ ...props }: React.ComponentProps<type
                 </SidebarMenu>
             </SidebarHeader>
             <SidebarContent>
-                {renderMainRouteTree(navMain)}
-                {renderSecondaryRouteTree(navSettings)}
+                <SidebarGroup>
+                    <SidebarGroupContent>{navMain.map((route) => renderCollapsibleRoute(route))}</SidebarGroupContent>
+                </SidebarGroup>
+                <SidebarGroup className="mt-auto">
+                    <SidebarGroupContent>{navSettings.map((route) => renderDropdownRoute(route))}</SidebarGroupContent>
+                </SidebarGroup>
             </SidebarContent>
             <SidebarFooter>
                 <SidebarMenu>

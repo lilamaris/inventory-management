@@ -32,28 +32,15 @@ export interface RouteMeta {
 export interface RouteNode extends RouteMeta {
     id: string
     href?: string
-    subRoutes?: [RouteNode, ...RouteNode[]]
+    subRoutes?: RouteNode[]
 }
 
 export const routeTree: Record<string, RouteNode> = {
-    order: {
-        id: 'order',
-        label: 'Order',
+    myOrder: {
+        id: 'my-order',
+        label: 'My Order',
         icon: ClipboardList,
-        subRoutes: [
-            {
-                id: 'my-order',
-                label: 'My Order',
-                icon: ClipboardList,
-                href: '/order/my-order',
-            },
-            {
-                id: 'vendor-order',
-                label: 'Vendor Order',
-                icon: ClipboardList,
-                href: '/order/vendor-order',
-            },
-        ],
+        href: '/my-order',
     },
 }
 
