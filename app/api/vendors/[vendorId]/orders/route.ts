@@ -1,4 +1,4 @@
-import { getPurchaseOrders } from '@/features/order/service/order'
+import { getOrders } from '@/features/order/service/order'
 import { type NextRequest, NextResponse } from 'next/server'
 
 export interface PathParams {
@@ -7,7 +7,7 @@ export interface PathParams {
 export async function GET(request: NextRequest, { params }: PathParams): Promise<NextResponse> {
     const { vendorId } = await params
 
-    const orders = await getPurchaseOrders({ vendorId })
+    const orders = await getOrders({ vendorId })
 
     return NextResponse.json(orders)
 }
