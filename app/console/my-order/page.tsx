@@ -2,7 +2,6 @@ import { getOrders } from '@/features/order/service/order'
 import { getCurrentSession } from '@/lib/server/session'
 import { redirect } from 'next/navigation'
 
-import OrderCard from '@/features/order/components/order-card'
 import { Order } from '@/features/order/type'
 import UserOrderDescription from '@/features/order/components/user-order-description'
 import UserOrderAction from '@/features/order/components/user-order-action'
