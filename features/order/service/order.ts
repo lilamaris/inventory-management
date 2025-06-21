@@ -54,6 +54,39 @@ export async function getOrders(params: OrderParams): Promise<Order[]> {
     return orders
 }
 
+export async function getOrderById(id: string): Promise<Order | null> {
+    const order = await prisma.purchaseOrder.findUnique({
+        where: { id },
+        include: {
+            items: {
+                include: {
+                    vendorItem: {
+                        select: {
+                            id: true,
+                            name: true,
+                            price: true,
+                        },
+                    },
+                },
+            },
+            vendor: {
+                select: {
+                    id: true,
+                    name: true,
+                },
+            },
+            orderByUser: {
+                select: {
+                    id: true,
+                    name: true,
+                },
+            },
+        },
+    })
+
+    return order
+}
+
 export async function createOrder({
     userId,
     vendorId,

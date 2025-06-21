@@ -15,7 +15,6 @@ export default function OrderItems({ items }: { items: OrderItem[] }) {
     return (
         <div className="flex flex-col gap-2">
             <Table>
-                <TableCaption>A list of your recent orders.</TableCaption>
                 <TableHeader>
                     <TableRow>
                         <TableHead>Item</TableHead>
