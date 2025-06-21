@@ -1,14 +1,14 @@
 import prisma from '@/lib/prisma'
 import { Order } from '@/features/order/type'
 
-export class PurchaseOrderError extends Error {
+export class OrderError extends Error {
     constructor(message: string) {
         super(message)
-        this.name = 'PurchaseOrderError'
+        this.name = 'OrderError'
     }
 }
 
-export type PurchaseOrderParams =
+export type OrderParams =
     | {
           userId: string
           vendorId?: never
@@ -17,7 +17,7 @@ export type PurchaseOrderParams =
           userId?: never
           vendorId: string
       }
-export async function getPurchaseOrders(params: PurchaseOrderParams): Promise<Order[]> {
+export async function getOrders(params: OrderParams): Promise<Order[]> {
     const { userId, vendorId } = params
     const orders = await prisma.purchaseOrder.findMany({
         where: {
@@ -54,7 +54,7 @@ export async function getPurchaseOrders(params: PurchaseOrderParams): Promise<Or
     return orders
 }
 
-export async function createPurchaseOrder({
+export async function createOrder({
     userId,
     vendorId,
     items,
