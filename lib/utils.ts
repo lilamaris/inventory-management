@@ -12,3 +12,7 @@ export function formatTime(time: Date) {
         day: 'numeric',
     })
 }
+
+export function capitalize(str: string) {
+    return str.toLowerCase().charAt(0).toUpperCase() + str.toLowerCase().slice(1)
+}
