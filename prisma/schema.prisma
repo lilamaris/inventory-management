@@ -27,6 +27,7 @@ enum AuthType {
 }
 
 enum OrderStatus {
+  IN_CART
   PENDING
   REJECTED
   CANCELLED
@@ -79,11 +80,12 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  accounts       Account[]
-  sessions       Session[]
-  roles          UserRole[]
-  orders         Order[]
-  manager Manager?
+  accounts         Account[]
+  sessions         Session[]
+  roles            UserRole[]
+  orders           Order[]
+  manager          Manager?
+  orderTransactions OrderTransaction[]
 }
 
 model Manager {
@@ -106,16 +108,16 @@ model Manager {
 }
 
 model Vendor {
-  id          String  @id @default(uuid())
-  name        String
-  description String?
+  id           String  @id @default(uuid())
+  name         String
+  description  String?
   thumbnailUrl String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  items    Item[]
-  managers Manager[]
+  items      Item[]
+  managers   Manager[]
   categories Category[]
 
   orders Order[]
@@ -127,16 +129,16 @@ model Category {
 
   vendorId String
   vendor   Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-  items Item[]
+  items    Item[]
 }
 
 model Item {
-  id          String  @id @default(uuid())
-  sku         String  @unique
-  name        String
-  description String?
-  quantity    Int
-  price       Int
+  id           String  @id @default(uuid())
+  sku          String  @unique
+  name         String
+  description  String?
+  quantity     Int
+  price        Int
   thumbnailUrl String?
 
   createdAt DateTime @default(now())
@@ -165,8 +167,8 @@ model Order {
   vendorId String
   vendor   Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
 
-  items          OrderItem[]
-  status         OrderStatus @default(PENDING)
+  orderItems        OrderItem[]
+  status            OrderStatus        @default(PENDING)
   orderTransactions OrderTransaction[]
 }
 
@@ -176,24 +178,26 @@ model OrderTransaction {
   transactionAt DateTime @default(now())
 
   orderId String
-  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-  previousStatus   OrderStatus
-  status           OrderStatus
-  updatedManagerId String
-  updatedManager   Manager       @relation(fields: [updatedManagerId], references: [id], onDelete: Cascade)
+  previousStatus  OrderStatus
+  status          OrderStatus
+  updatedByUserId String
+  updatedByUser   User        @relation(fields: [updatedByUserId], references: [id], onDelete: Cascade)
+  Manager         Manager?    @relation(fields: [managerId], references: [id])
+  managerId       String?
 }
 
 model OrderItem {
-  id String @id @default(uuid())
+  id       String @id @default(uuid())
   quantity Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   orderId String
-  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   itemId String
-  item   Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  item   Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
 }
