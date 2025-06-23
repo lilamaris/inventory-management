@@ -2,6 +2,13 @@ import { OrderTransaction } from '@/features/orderTransaction/orderTransaction.d
 import { OrderStatus } from '@/generated/prisma'
 import prisma from '@/lib/prisma'
 
+export async function getOrderTransaction(id: string): Promise<OrderTransaction | null> {
+    const orderTransaction = await prisma.orderTransaction.findUnique({
+        where: { id },
+    })
+    return orderTransaction
+}
+
 export async function getOrderTransactionsByOrderId(orderId: string): Promise<OrderTransaction[]> {
     const orderTransactions = await prisma.orderTransaction.findMany({
         where: { orderId },
