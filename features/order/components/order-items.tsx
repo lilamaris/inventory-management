@@ -1,15 +1,5 @@
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableFooter,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table'
-
-import { OrderItem } from '@/features/order/type'
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { OrderItem } from '@/features/composite/order.dto'
 
 export default function OrderItems({ items }: { items: OrderItem[] }) {
     return (
@@ -24,12 +14,12 @@ export default function OrderItems({ items }: { items: OrderItem[] }) {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {items.map((item) => (
+                    {items.map(({ item, quantity }) => (
                         <TableRow key={item.id}>
-                            <TableCell>{item.vendorItem.name}</TableCell>
-                            <TableCell>{item.quantity}</TableCell>
-                            <TableCell>{item.vendorItem.price}</TableCell>
-                            <TableCell>{item.vendorItem.price * item.quantity}</TableCell>
+                            <TableCell>{item.name}</TableCell>
+                            <TableCell>{quantity}</TableCell>
+                            <TableCell>{item.price}</TableCell>
+                            <TableCell>{item.price * quantity}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
@@ -37,7 +27,7 @@ export default function OrderItems({ items }: { items: OrderItem[] }) {
                     <TableRow>
                         <TableCell colSpan={3}>Total</TableCell>
                         <TableCell>
-                            {items.reduce((acc, item) => acc + item.vendorItem.price * item.quantity, 0)}
+                            {items.reduce((acc, { item, quantity }) => acc + item.price * quantity, 0)}
                         </TableCell>
                     </TableRow>
                 </TableFooter>
