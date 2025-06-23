@@ -26,6 +26,14 @@ enum AuthType {
   CREDENTIALS
 }
 
+enum OrderStatus {
+  PENDING
+  REJECTED
+  CANCELLED
+  APPROVED
+  DELIVERED
+}
+
 model Account {
   id           String   @id @default(uuid())
   providerId   String
@@ -74,12 +82,11 @@ model User {
   accounts       Account[]
   sessions       Session[]
   roles          UserRole[]
-  purchaseOrders PurchaseOrder[]
-
-  manageVendor VendorManager[]
+  orders         Order[]
+  manager Manager?
 }
 
-model VendorManager {
+model Manager {
   id String @id @default(uuid())
 
   createdAt DateTime @default(now())
@@ -87,15 +94,15 @@ model VendorManager {
 
   isOwner Boolean @default(false)
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
   vendorId String
   vendor   Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
 
-  transactions PurchaseOrderTransaction[]
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, vendorId])
+  orderTransactions OrderTransaction[]
+
+  @@unique([vendorId, userId])
 }
 
 model Vendor {
@@ -106,20 +113,23 @@ model Vendor {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  items    VendorItem[]
-  managers VendorManager[]
+  items    Item[]
+  managers Manager[]
+  categories Category[]
 
-  purchaseOrders PurchaseOrder[]
+  orders Order[]
 }
 
-model VendorCategory {
+model Category {
   id   String @id @default(uuid())
   name String
 
-  items VendorItem[]
+  vendorId String
+  vendor   Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  items Item[]
 }
 
-model VendorItem {
+model Item {
   id          String  @id @default(uuid())
   sku         String  @unique
   name        String
@@ -130,26 +140,18 @@ model VendorItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  categoryId String?
-  category   VendorCategory? @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   vendorId String
   vendor   Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
 
-  purchaseOrderItems PurchaseOrderItem[]
+  orderItems OrderItem[]
 
   @@unique([vendorId, sku])
 }
 
-enum PurchaseOrderStatus {
-  PENDING
-  REJECTED
-  CANCELLED
-  APPROVED
-  DELIVERED
-}
-
-model PurchaseOrder {
+model Order {
   id String @id @default(uuid())
 
   createdAt DateTime @default(now())
@@ -161,35 +163,35 @@ model PurchaseOrder {
   vendorId String
   vendor   Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
 
-  items          PurchaseOrderItem[]
-  status         PurchaseOrderStatus @default(PENDING)
-  transactions PurchaseOrderTransaction[]
+  items          OrderItem[]
+  status         OrderStatus @default(PENDING)
+  orderTransactions OrderTransaction[]
 }
 
-model PurchaseOrderTransaction {
+model OrderTransaction {
   id String @id @default(uuid())
 
   transactionAt DateTime @default(now())
 
-  purchaseOrderId String
-  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  orderId String
+  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-  previousStatus   PurchaseOrderStatus
-  status           PurchaseOrderStatus
+  previousStatus   OrderStatus
+  status           OrderStatus
   updatedManagerId String
-  updatedManager   VendorManager       @relation(fields: [updatedManagerId], references: [id], onDelete: Cascade)
+  updatedManager   Manager       @relation(fields: [updatedManagerId], references: [id], onDelete: Cascade)
 }
 
-model PurchaseOrderItem {
+model OrderItem {
   id String @id @default(uuid())
   quantity Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  purchaseOrderId String
-  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
-  
-  vendorItemId String
-  vendorItem   VendorItem @relation(fields: [vendorItemId], references: [id], onDelete: Cascade)
+  orderId String
+  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  itemId String
+  item   Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
 }
