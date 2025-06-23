@@ -16,9 +16,23 @@ export async function getOrdersByUserId(userId: string): Promise<Order[]> {
     return orders
 }
 
+export async function getOrdersByUserIdAndStatus(userId: string, status: OrderStatus): Promise<Order[]> {
+    const orders = await prisma.order.findMany({
+        where: { orderByUserId: userId, status },
+    })
+    return orders
+}
+
 export async function getOrdersByVendorId(vendorId: string): Promise<Order[]> {
     const orders = await prisma.order.findMany({
         where: { vendorId },
+    })
+    return orders
+}
+
+export async function getOrdersByVendorIdAndStatus(vendorId: string, status: OrderStatus): Promise<Order[]> {
+    const orders = await prisma.order.findMany({
+        where: { vendorId, status },
     })
     return orders
 }
