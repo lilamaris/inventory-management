@@ -29,13 +29,11 @@ export async function createUser(
             roles: true,
         },
     })
-
     return user
 }
 
 export async function checkUserExistsByEmail(email: string): Promise<boolean> {
     const userCount = await prisma.user.count({ where: { email } })
-
     return userCount > 0
 }
 
@@ -46,7 +44,6 @@ export async function getUserByEmail(email: string): Promise<User | null> {
             roles: true,
         },
     })
-
     return user
 }
 
@@ -58,6 +55,16 @@ export async function updateUserName(userId: string, name: string): Promise<User
             roles: true,
         },
     })
+    return user
+}
 
+export async function updateUserAvatarUrl(userId: string, avatarUrl: string): Promise<User> {
+    const user = await prisma.user.update({
+        where: { id: userId },
+        data: { avatarUrl },
+        include: {
+            roles: true,
+        },
+    })
     return user
 }
