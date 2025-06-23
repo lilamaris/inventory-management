@@ -1,22 +1,18 @@
-import { OrderStatus } from '@/generated/prisma'
-
 import prisma from '@/lib/prisma'
 import { OrderItem, UserOrder } from '@/features/composite/order.dto'
 import { Order } from '@/features/order/order.dto'
 
 export interface UserOrderParams {
     userId: string
-    status: OrderStatus
 }
 
 export interface VendorOrderParams {
     vendorId: string
-    status: OrderStatus
 }
 
-export async function getUserOrders({ userId, status }: UserOrderParams): Promise<UserOrder[]> {
+export async function getUserOrders({ userId }: UserOrderParams): Promise<UserOrder[]> {
     const orders = await prisma.order.findMany({
-        where: { orderByUserId: userId, status },
+        where: { orderByUserId: userId },
         include: {
             vendor: true,
             orderItems: {

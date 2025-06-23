@@ -1,6 +1,8 @@
 'use client'
 
-import { ColumnDef } from '@tanstack/react-table'
+import * as React from 'react'
+
+import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { formatTime } from '@/lib/utils'
 import DataTable from '@/components/data-table'
 
@@ -9,6 +11,13 @@ import VendorAvatar from '@/features/vendor/components/vendor-avatar'
 import OrderStatus from '@/features/order/components/order-status'
 import DataTableColumnHeader from '@/components/data-table-column.header'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import DataTableViewOptions from '@/components/data-table-view-options'
+import DataTablePagination from '@/components/data-table-pagination'
+import { OrderStatus as PrismaOrderStatus } from '@/generated/prisma'
+import { getOrderStatus } from '@/features/order/utils'
+import { Button } from '@/components/ui/button'
+import { Eye, MessageCircle } from 'lucide-react'
 
 export const columns: ColumnDef<UserOrder>[] = [
     {
@@ -51,6 +60,31 @@ export const columns: ColumnDef<UserOrder>[] = [
         },
     },
     {
+        id: 'total',
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Total" />,
+        cell: ({ row }) => {
+            const { orderItems } = row.original
+            return (
+                <div>
+                    {orderItems
+                        .reduce((acc, orderItem) => acc + orderItem.quantity * orderItem.item.price, 0)
+                        .toLocaleString('en-US', {
+                            style: 'currency',
+                            currency: 'USD',
+                        })}
+                </div>
+            )
+        },
+    },
+    {
+        id: 'items',
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Items" />,
+        cell: ({ row }) => {
+            const { orderItems } = row.original
+            return <div>{orderItems.reduce((acc, item) => acc + item.quantity, 0)} Items</div>
+        },
+    },
+    {
         accessorKey: 'createdAt',
         header: ({ column }) => <DataTableColumnHeader column={column} title="Date" />,
         cell: ({ row }) => {
@@ -59,19 +93,52 @@ export const columns: ColumnDef<UserOrder>[] = [
         },
     },
     {
-        accessorKey: 'orderItems',
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Summary" />,
-        cell: ({ row }) => {
-            const { orderItems } = row.original
-            return (
-                <div>
-                    {orderItems.reduce((acc, item) => acc + item.quantity, 0)} of {orderItems.length} items
-                </div>
-            )
-        },
+        id: 'actions',
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Actions" />,
+        cell: ({ row }) => (
+            <div className="flex">
+                <Button variant="ghost" size="icon">
+                    <MessageCircle />
+                </Button>
+                <Button variant="ghost" size="icon">
+                    <Eye />
+                </Button>
+            </div>
+        ),
     },
 ]
 
 export default function UserOrderTable({ orders }: { orders: UserOrder[] }) {
-    return <DataTable columns={columns} data={orders} />
+    const [filteredOrders, setFilteredOrders] = React.useState<UserOrder[]>(orders)
+    const [status, setStatus] = React.useState<PrismaOrderStatus>(PrismaOrderStatus.PENDING)
+    const table = useReactTable<UserOrder>({
+        data: filteredOrders,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+    })
+
+    React.useEffect(() => {
+        setFilteredOrders(orders.filter((order) => order.status === status))
+    }, [status, orders])
+
+    return (
+        <Tabs
+            defaultValue={PrismaOrderStatus.PENDING}
+            onValueChange={(value) => setStatus(getOrderStatus(value) ?? PrismaOrderStatus.PENDING)}
+        >
+            <div className="flex items-center justify-between">
+                <TabsList>
+                    <TabsTrigger value={PrismaOrderStatus.PENDING}>Pending</TabsTrigger>
+                    <TabsTrigger value={PrismaOrderStatus.APPROVED}>Approved</TabsTrigger>
+                    <TabsTrigger value={PrismaOrderStatus.REJECTED}>Rejected</TabsTrigger>
+                    <TabsTrigger value={PrismaOrderStatus.DELIVERED}>Delivered</TabsTrigger>
+                </TabsList>
+                <DataTableViewOptions table={table} />
+            </div>
+            <div className="flex flex-col gap-2">
+                <DataTable table={table} />
+                <DataTablePagination table={table} />
+            </div>
+        </Tabs>
+    )
 }
