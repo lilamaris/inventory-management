@@ -109,6 +109,7 @@ model Vendor {
   id          String  @id @default(uuid())
   name        String
   description String?
+  thumbnailUrl String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -136,6 +137,7 @@ model Item {
   description String?
   quantity    Int
   price       Int
+  thumbnailUrl String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
