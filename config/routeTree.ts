@@ -1,4 +1,4 @@
-import { LucideIcon, XCircle, CircleCheck, CirclePause, CircleEllipsis, Clipboard } from 'lucide-react'
+import { LucideIcon, XCircle, CircleCheck, CirclePause, CircleEllipsis, Clipboard, Store } from 'lucide-react'
 
 export interface RouteMeta {
     label: string
@@ -12,6 +12,12 @@ export interface RouteNode extends RouteMeta {
 }
 
 export const routeTree: Record<string, RouteNode> = {
+    vendors: {
+        id: 'vendors',
+        label: 'Vendors',
+        icon: Store,
+        href: '/vendors',
+    },
     order: {
         id: 'order',
         label: 'Order',
