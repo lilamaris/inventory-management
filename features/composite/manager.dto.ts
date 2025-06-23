@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
-import { vendorSchema } from '@/features/vendor/service/vendor.dto'
-import { managerSchema } from '@/features/manager/service/manager.dto'
+import { vendorSchema } from '@/features/vendor/vendor.dto'
+import { managerSchema } from '@/features/manager/manager.dto'
 import { userSchema } from '@/features/user/user.dto'
 import { orderTransactionSchema } from '@/features/orderTransaction/orderTransaction.dto'
 
