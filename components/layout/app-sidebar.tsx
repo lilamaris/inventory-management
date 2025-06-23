@@ -22,7 +22,7 @@ import { appMeta } from '@/config/app'
 import { getCurrentSession } from '@/lib/server/session'
 import Image from 'next/image'
 import { redirect } from 'next/navigation'
-import { getOwnVendor } from '@/features/vendorManager/service/ownership'
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 
 function renderCollapsibleRoute(route: RouteNode) {
     if (route.subRoutes) {
@@ -110,34 +110,8 @@ export default async function AppSidebar({ ...props }: React.ComponentProps<type
     if (!session || !user) {
         redirect('/auth/login')
     }
-    const vendors = await getOwnVendor(user.id)
     const navSettings = Object.values(routeTree).filter((tree) => ['settings', 'help'].includes(tree.id))
     const navMain = Object.values(routeTree).filter((tree) => !['settings', 'help'].includes(tree.id))
-
-    navMain.push({
-        id: 'vendor',
-        label: 'Vendor',
-        icon: Store,
-        subRoutes: vendors.map((vendor) => ({
-            id: vendor.id,
-            label: vendor.name,
-            icon: Store,
-            subRoutes: [
-                {
-                    id: 'store',
-                    label: 'Store',
-                    icon: Store,
-                    href: `/vendor/${vendor.id}`,
-                },
-                {
-                    id: 'order',
-                    label: 'Order',
-                    icon: ClipboardList,
-                    href: `/vendor/${vendor.id}/order`,
-                },
-            ],
-        })),
-    })
 
     return (
         <Sidebar className={cn(props.className, 'select-none')} {...props}>
@@ -171,11 +145,10 @@ export default async function AppSidebar({ ...props }: React.ComponentProps<type
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
                             <Link href="/auth/profile">
-                                {user?.avatarUrl ? (
-                                    <Image src={user.avatarUrl} alt="Avatar" className="bg-white size-8 rounded-full" />
-                                ) : (
-                                    <div>Nothing here</div>
-                                )}
+                                <Avatar>
+                                    <AvatarImage src={user.avatarUrl ?? ''} alt="Avatar" />
+                                    <AvatarFallback>{user.name.slice(0, 2)}</AvatarFallback>
+                                </Avatar>
                                 <div className="flex flex-col gap-0.5 leading-none">
                                     <span className="font-medium">{user?.name}</span>
                                     <span className="text-muted-foreground">{user?.email}</span>
