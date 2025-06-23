@@ -18,6 +18,13 @@ export async function isManagerOwnerInVendor(vendorId: string, userId: string): 
     return manager?.isOwner ?? false
 }
 
+export async function getManager(id: string): Promise<Manager | null> {
+    const manager = await prisma.manager.findUnique({
+        where: { id },
+    })
+    return manager
+}
+
 export async function getManagerByVendorIdAndUserId(vendorId: string, userId: string): Promise<Manager | null> {
     const manager = await prisma.manager.findUnique({
         where: { vendorId_userId: { vendorId, userId } },
