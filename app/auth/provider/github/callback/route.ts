@@ -1,5 +1,4 @@
 import type { OAuth2Tokens } from 'arctic'
-import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 
 import { AuthType } from '@/generated/prisma/client'
@@ -22,7 +21,7 @@ export async function GET(request: Request): Promise<Response> {
 
     try {
         tokens = await github.validateAuthorizationCode(code)
-    } catch (error) {
+    } catch {
         return new Response('Invalid Code', { status: 400 })
     }
     const githubAccessToken = tokens.accessToken()
