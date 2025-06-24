@@ -20,7 +20,7 @@ import { getOrderStatus } from '@/features/order/utils'
 
 import UserAvatar from '@/features/user/components/user-avatar'
 import OrderStatus from '@/features/order/components/order-status'
-import OrderEditSheet from '@/features/order/components/order-edit-sheet'
+import OrderSheet from '@/features/order/components/order-sheet'
 import OrderFormField from '@/features/order/components/order-form-field'
 
 export const columns: ColumnDef<OrderWith<['orderItems' | 'orderByUser']>>[] = [
@@ -97,9 +97,9 @@ export const columns: ColumnDef<OrderWith<['orderItems' | 'orderByUser']>>[] = [
         header: ({ column }) => <DataTableColumnHeader column={column} title="Actions" />,
         cell: ({ row }) => (
             <div className="flex">
-                <OrderEditSheet triggerIcon={<MoreHorizontal />}>
+                <OrderSheet order={row.original} triggerIcon={<MoreHorizontal />}>
                     <OrderFormField defaultValue={row.original} />
-                </OrderEditSheet>
+                </OrderSheet>
             </div>
         ),
     },

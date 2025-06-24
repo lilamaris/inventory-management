@@ -11,6 +11,7 @@ export default function UserAvatar({ user }: { user: User }) {
             </Avatar>
             <div className="flex flex-col">
                 <h1 className="group-hover:underline">{user.name}</h1>
+                <p className="text-sm text-muted-foreground">{user.email}</p>
             </div>
         </Link>
     )
