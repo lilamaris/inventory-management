@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 import { Order, orderSchema } from '@/features/order/dto.primitive'
-import { PrimitiveWithInclude } from '@/lib/type'
+import { PrimitiveWithInclude, PrimitiveWithPartial } from '@/lib/type'
 
 import { itemSchema } from '@/features/item/dto.primitive'
 import { userSchema } from '@/features/user/dto.primitive'
@@ -48,3 +48,4 @@ interface IncludeMap {
 }
 
 export type OrderWith<Key extends (keyof IncludeMap)[]> = PrimitiveWithInclude<Order, IncludeMap, Key>
+export type OrderWithPartial<Key extends (keyof IncludeMap)[]> = PrimitiveWithPartial<Order, IncludeMap, Key>
