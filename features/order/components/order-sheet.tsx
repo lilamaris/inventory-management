@@ -5,6 +5,7 @@ import { OrderWithPartial } from '@/features/order/dto.composite'
 import UserAvatar from '@/features/user/components/user-avatar'
 import { formatTime } from '@/lib/utils'
 import VendorAvatar from '@/features/vendor/components/vendor-avatar'
+import ItemAvatar from '@/features/item/components/item-avatar'
 
 export interface OrderSheetProps {
     order: OrderWithPartial<['orderByUser' | 'vendor' | 'orderItems' | 'orderTransactions']>
@@ -40,6 +41,20 @@ export default function OrderSheet({ order, triggerIcon, children }: PropsWithCh
                             <VendorAvatar vendor={order.vendor} />
                         </div>
                     )}
+                    <div className="flex flex-col gap-2">
+                        <span className="text-xs text-muted-foreground">Order items</span>
+                        <div className="flex flex-col gap-2">
+                            {order.orderItems?.map((item) => (
+                                <div key={item.id} className="flex items-center gap-2">
+                                    <ItemAvatar item={item.item} />
+                                    <span className="text-sm">
+                                        {item.quantity} x {item.item.price} = {item.quantity * item.item.price}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    {children}
                 </div>
             </SheetContent>
         </Sheet>
