@@ -1,5 +1,5 @@
 import { OrderTransaction } from '@/features/orderTransaction/dto.primitive'
-import { OrderStatus } from '@/generated/prisma'
+import { OrderStatus, Prisma } from '@/generated/prisma'
 import prisma from '@/lib/prisma'
 
 export async function getOrderTransaction(id: string): Promise<OrderTransaction | null> {
@@ -18,7 +18,7 @@ export async function getOrderTransactionsByOrderId(orderId: string): Promise<Or
 
 export async function getOrderTransactionByManagerId(managerId: string): Promise<OrderTransaction[]> {
     const orderTransactions = await prisma.orderTransaction.findMany({
-        where: { updatedManagerId: managerId },
+        where: { updatedByUserId: managerId },
     })
     return orderTransactions
 }
@@ -37,22 +37,34 @@ export async function getOrderTransactionByPreviousStatus(previousStatus: OrderS
     return orderTransactions
 }
 
-export async function createOrderTransaction(
+export async function createOrderTransactionByOrderId(
     orderId: string,
     previousStatus: OrderStatus,
     status: OrderStatus,
-    updatedManagerId: string,
+    updatedByUserId: string,
 ): Promise<OrderTransaction> {
     const orderTransaction = await prisma.orderTransaction.create({
         data: {
             orderId,
             previousStatus,
             status,
-            updatedManagerId,
+            updatedByUserId,
         },
     })
     return orderTransaction
 }
+
+export const $createOrderTransaction =
+    (tx: Prisma.TransactionClient) =>
+    (orderId: string, previousStatus: OrderStatus, status: OrderStatus, updatedByUserId: string) =>
+        tx.orderTransaction.create({
+            data: {
+                orderId,
+                previousStatus,
+                status,
+                updatedByUserId,
+            },
+        })
 
 export async function updatePreviousStatusInOrderTransaction(
     id: string,

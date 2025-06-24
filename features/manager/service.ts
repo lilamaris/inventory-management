@@ -3,13 +3,6 @@ import prisma from '@/lib/prisma'
 import { Manager } from '@/features/manager/dto.primitive'
 import { type ManagerWith } from '@/features/manager/dto.composite'
 
-export async function isManagerExistsInVendor(vendorId: string, userId: string): Promise<boolean> {
-    const manager = await prisma.manager.findUnique({
-        where: { vendorId_userId: { vendorId, userId } },
-    })
-    return manager !== null
-}
-
 export async function isManagerOwnerInVendor(vendorId: string, userId: string): Promise<boolean> {
     const manager = await prisma.manager.findUnique({
         where: { vendorId_userId: { vendorId, userId } },
@@ -18,6 +11,13 @@ export async function isManagerOwnerInVendor(vendorId: string, userId: string): 
         },
     })
     return manager?.isOwner ?? false
+}
+
+export async function isManagerInVendor(userId: string, vendorId: string): Promise<boolean> {
+    const manager = await prisma.manager.findUnique({
+        where: { vendorId_userId: { vendorId, userId } },
+    })
+    return manager !== null
 }
 
 export async function createManager(vendorId: string, userId: string): Promise<Manager> {

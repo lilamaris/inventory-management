@@ -1,12 +1,14 @@
 import { z } from 'zod'
 
 import { Order, orderSchema } from '@/features/order/dto.primitive'
-import { PrimitiveWithInclude, PrimitiveWithPartial } from '@/lib/type'
+import { PrimitiveWithInclude, PrimitiveWithPartial, ActionState } from '@/lib/type'
 
 import { itemSchema } from '@/features/item/dto.primitive'
 import { userSchema } from '@/features/user/dto.primitive'
 import { vendorSchema } from '@/features/vendor/dto.primitive'
 import { orderTransactionSchema } from '@/features/orderTransaction/dto.primitive'
+
+import { OrderStatus } from '@/generated/prisma'
 
 export const orderItemSchema = z.object({
     id: z.string(),
@@ -49,3 +51,10 @@ interface IncludeMap {
 
 export type OrderWith<Key extends (keyof IncludeMap)[]> = PrimitiveWithInclude<Order, IncludeMap, Key>
 export type OrderWithPartial<Key extends (keyof IncludeMap)[]> = PrimitiveWithPartial<Order, IncludeMap, Key>
+
+export const updateOrderStatusSchema = z.object({
+    orderId: z.string({ message: 'Order id is required' }),
+    vendorId: z.string({ message: 'Vendor id is required' }),
+    status: z.nativeEnum(OrderStatus, { message: 'Invalid status' }),
+})
+export type UpdateOrderStatus = ActionState<typeof updateOrderStatusSchema>
