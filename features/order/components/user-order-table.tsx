@@ -1,25 +1,28 @@
 'use client'
 
 import * as React from 'react'
-
-import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import { formatTime } from '@/lib/utils'
-import DataTable from '@/components/data-table'
-
-import { UserOrder } from '@/features/composite/order.dto'
-import VendorAvatar from '@/features/vendor/components/vendor-avatar'
-import OrderStatus from '@/features/order/components/order-status'
-import DataTableColumnHeader from '@/components/data-table-column.header'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import DataTableViewOptions from '@/components/data-table-view-options'
-import DataTablePagination from '@/components/data-table-pagination'
-import { OrderStatus as PrismaOrderStatus } from '@/generated/prisma'
-import { getOrderStatus } from '@/features/order/utils'
-import { Button } from '@/components/ui/button'
 import { Eye, MessageCircle } from 'lucide-react'
 
-export const columns: ColumnDef<UserOrder>[] = [
+import { OrderStatus as PrismaOrderStatus } from '@/generated/prisma'
+import { formatTime } from '@/lib/utils'
+
+import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Button } from '@/components/ui/button'
+
+import DataTable from '@/components/data-table'
+import DataTableColumnHeader from '@/components/data-table-column.header'
+import DataTableViewOptions from '@/components/data-table-view-options'
+import DataTablePagination from '@/components/data-table-pagination'
+
+import { OrderWith } from '@/features/order/dto.composite'
+import { getOrderStatus } from '@/features/order/utils'
+
+import VendorAvatar from '@/features/vendor/components/vendor-avatar'
+import OrderStatus from '@/features/order/components/order-status'
+
+export const columns: ColumnDef<OrderWith<['orderItems' | 'vendor']>>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -108,18 +111,14 @@ export const columns: ColumnDef<UserOrder>[] = [
     },
 ]
 
-export default function UserOrderTable({ orders }: { orders: UserOrder[] }) {
-    const [filteredOrders, setFilteredOrders] = React.useState<UserOrder[]>(orders)
+export default function UserOrderTable({ orders }: { orders: OrderWith<['orderItems' | 'vendor']>[] }) {
     const [status, setStatus] = React.useState<PrismaOrderStatus>(PrismaOrderStatus.PENDING)
-    const table = useReactTable<UserOrder>({
+    const filteredOrders = React.useMemo(() => orders.filter((ord) => ord.status === status), [orders, status])
+    const table = useReactTable<OrderWith<['orderItems' | 'vendor']>>({
         data: filteredOrders,
         columns,
         getCoreRowModel: getCoreRowModel(),
     })
-
-    React.useEffect(() => {
-        setFilteredOrders(orders.filter((order) => order.status === status))
-    }, [status, orders])
 
     return (
         <Tabs

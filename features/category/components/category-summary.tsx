@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 
-import { Category } from '@/features/category/category.dto'
+import { Category } from '@/features/category/dto.primitive'
 
 export default function CategorySummary({ category }: { category: Category }) {
     return (

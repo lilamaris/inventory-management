@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 
-import { Item } from '@/features/item/item.dto'
+import { Item } from '@/features/item/dto.primitive'
 
 export default function ItemAvatar({ item }: { item: Item }) {
     return (

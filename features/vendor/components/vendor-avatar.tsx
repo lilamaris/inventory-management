@@ -1,5 +1,5 @@
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
-import { Vendor } from '@/features/vendor/vendor.dto'
+import { Vendor } from '@/features/vendor/dto.primitive'
 import Link from 'next/link'
 
 export default function VendorAvatar({ vendor }: { vendor: Vendor }) {
