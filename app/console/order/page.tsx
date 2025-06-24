@@ -1,21 +1,16 @@
 import { getCurrentSession } from '@/lib/server/session'
-import { notFound, redirect } from 'next/navigation'
+import { redirect } from 'next/navigation'
 
-import { getUserOrders } from '@/features/composite/order.service'
-import UserOrderTable from '@/features/composite/components/user-order-table'
+import { getUserOrders } from '@/features/order/service'
+import UserOrderTable from '@/features/order/components/user-order-table'
 
-export interface PathParams {
-    params: Promise<{ orderStatus: string }>
-}
-export default async function OrderPage({ params }: PathParams) {
-    const { orderStatus } = await params
-
+export default async function OrderPage() {
     const { session, user } = await getCurrentSession()
     if (!session || !user) {
         redirect('/auth/login')
     }
 
-    const orders = await getUserOrders({ userId: user.id })
+    const orders = await getUserOrders(user.id)
 
     return (
         <div>

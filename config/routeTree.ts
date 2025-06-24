@@ -1,4 +1,4 @@
-import { LucideIcon, XCircle, CircleCheck, CirclePause, CircleEllipsis, Clipboard, Store } from 'lucide-react'
+import { LucideIcon, Clipboard, Store, Users, Shield, CreditCard, History, Truck } from 'lucide-react'
 
 export interface RouteMeta {
     label: string
@@ -23,30 +23,35 @@ export const routeTree: Record<string, RouteNode> = {
         label: 'Order',
         icon: Clipboard,
         href: '/order',
+    },
+    myVendor: {
+        id: 'myVendor',
+        label: 'My Vendor',
+        icon: Shield,
         subRoutes: [
             {
-                id: 'pending',
-                label: 'Pending',
-                icon: CirclePause,
-                href: '/order/pending',
+                id: 'orders',
+                label: 'Orders',
+                icon: Clipboard,
+                href: '/my-vendor/orders',
             },
             {
-                id: 'approved',
-                label: 'Approved',
-                icon: CircleEllipsis,
-                href: '/order/approved',
+                id: 'items',
+                label: 'Items',
+                icon: Store,
+                href: '/my-vendor/items',
             },
             {
-                id: 'rejected',
-                label: 'Rejected',
-                icon: XCircle,
-                href: '/order/rejected',
+                id: 'managers',
+                label: 'Managers',
+                icon: Users,
+                href: '/my-vendor/managers',
             },
             {
-                id: 'delivered',
-                label: 'Delivered',
-                icon: CircleCheck,
-                href: '/order/delivered',
+                id: 'fulfillment',
+                label: 'Fulfillment',
+                icon: Truck,
+                href: '/my-vendor/fulfillment',
             },
         ],
     },
