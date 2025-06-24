@@ -54,8 +54,8 @@ export default function OrderSheet({ order, triggerIcon, children }: PropsWithCh
                             ))}
                         </div>
                     </div>
-                    {children}
                 </div>
+                <div className="flex flex-col flex-1 p-4">{children}</div>
             </SheetContent>
         </Sheet>
     )

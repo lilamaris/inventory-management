@@ -124,6 +124,7 @@ export default function VendorOrderTable({ orders }: { orders: OrderWith<['order
                     <TabsTrigger value={PrismaOrderStatus.PENDING}>Pending</TabsTrigger>
                     <TabsTrigger value={PrismaOrderStatus.APPROVED}>Approved</TabsTrigger>
                     <TabsTrigger value={PrismaOrderStatus.REJECTED}>Rejected</TabsTrigger>
+                    <TabsTrigger value={PrismaOrderStatus.CANCELLED}>Cancelled</TabsTrigger>
                     <TabsTrigger value={PrismaOrderStatus.DELIVERED}>Delivered</TabsTrigger>
                 </TabsList>
                 <DataTableViewOptions table={table} />
