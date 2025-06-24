@@ -84,8 +84,8 @@ model User {
   sessions         Session[]
   roles            UserRole[]
   orders           Order[]
-  manager          Manager?
   orderTransactions OrderTransaction[]
+  manager          Manager?
 }
 
 model Manager {
@@ -101,8 +101,6 @@ model Manager {
 
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  orderTransactions OrderTransaction[]
 
   @@unique([vendorId, userId])
 }
@@ -184,8 +182,6 @@ model OrderTransaction {
   status          OrderStatus
   updatedByUserId String
   updatedByUser   User        @relation(fields: [updatedByUserId], references: [id], onDelete: Cascade)
-  Manager         Manager?    @relation(fields: [managerId], references: [id])
-  managerId       String?
 }
 
 model OrderItem {
