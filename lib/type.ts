@@ -11,3 +11,8 @@ export type ActionState<T extends z.ZodType> =
           message?: string
       }
     | undefined
+
+type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never
+
+export type PrimitiveWithInclude<Primitive, Map, Key extends (keyof Map)[]> = Primitive &
+    UnionToIntersection<Map[Key[number]]>

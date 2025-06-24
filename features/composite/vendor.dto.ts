@@ -1,8 +1,8 @@
 import { z } from 'zod'
-import { vendorSchema as primitiveVendorSchema } from '@/features/vendor/vendor.dto'
-import { itemSchema } from '@/features/item/item.dto'
-import { managerSchema } from '@/features/manager/manager.dto'
-import { categorySchema } from '@/features/category/category.dto'
+import { vendorSchema as primitiveVendorSchema } from '@/features/vendor/dto.primitive'
+import { itemSchema } from '@/features/item/dto.primitive'
+import { managerSchema } from '@/features/manager/dto.primitive'
+import { categorySchema } from '@/features/category/dto.primitive'
 
 export const vendorSchema = primitiveVendorSchema.extend({
     items: z.array(itemSchema),

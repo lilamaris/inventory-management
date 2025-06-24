@@ -1,4 +1,4 @@
-import { Item } from '@/features/item/item.dto'
+import { Item } from '@/features/item/dto.primitive'
 import prisma from '@/lib/prisma'
 
 export async function getItemsByVendorId(vendorId: string): Promise<Item[]> {

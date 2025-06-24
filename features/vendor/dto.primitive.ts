@@ -8,5 +8,4 @@ export const vendorSchema = z.object({
     createdAt: z.date(),
     updatedAt: z.date(),
 })
-
 export type Vendor = z.infer<typeof vendorSchema>

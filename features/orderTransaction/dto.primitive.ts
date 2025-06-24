@@ -7,7 +7,7 @@ export const orderTransactionSchema = z.object({
     orderId: z.string(),
     previousStatus: z.nativeEnum(OrderStatus),
     status: z.nativeEnum(OrderStatus),
-    updatedManagerId: z.string(),
+    updatedByUserId: z.string(),
 })
 
 export type OrderTransaction = z.infer<typeof orderTransactionSchema>

@@ -1,5 +1,7 @@
 import prisma from '@/lib/prisma'
-import { Manager } from '@/features/manager/service/manager.dto'
+
+import { Manager } from '@/features/manager/dto.primitive'
+import { type ManagerWith } from '@/features/manager/dto.composite'
 
 export async function isManagerExistsInVendor(vendorId: string, userId: string): Promise<boolean> {
     const manager = await prisma.manager.findUnique({
@@ -16,27 +18,6 @@ export async function isManagerOwnerInVendor(vendorId: string, userId: string): 
         },
     })
     return manager?.isOwner ?? false
-}
-
-export async function getManager(id: string): Promise<Manager | null> {
-    const manager = await prisma.manager.findUnique({
-        where: { id },
-    })
-    return manager
-}
-
-export async function getManagerByVendorIdAndUserId(vendorId: string, userId: string): Promise<Manager | null> {
-    const manager = await prisma.manager.findUnique({
-        where: { vendorId_userId: { vendorId, userId } },
-    })
-    return manager
-}
-
-export async function getManagersByVendorId(vendorId: string): Promise<Manager[] | null> {
-    const managers = await prisma.manager.findMany({
-        where: { vendorId },
-    })
-    return managers
 }
 
 export async function createManager(vendorId: string, userId: string): Promise<Manager> {
@@ -64,4 +45,24 @@ export async function deleteManager(vendorId: string, userId: string): Promise<M
         where: { vendorId_userId: { vendorId, userId } },
     })
     return manager
+}
+
+export async function getOwnVendorByUserId(userId: string): Promise<ManagerWith<['vendor']>['vendor'] | null> {
+    const manager = await prisma.manager.findUnique({
+        where: { userId, isOwner: true },
+        include: {
+            vendor: true,
+        },
+    })
+    return manager?.vendor ?? null
+}
+
+export async function getManagersByVendorId(vendorId: string): Promise<ManagerWith<['user']>[]> {
+    const managers = await prisma.manager.findMany({
+        where: { vendorId },
+        include: {
+            user: true,
+        },
+    })
+    return managers
 }

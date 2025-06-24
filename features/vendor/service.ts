@@ -1,4 +1,4 @@
-import { Vendor } from '@/features/vendor/vendor.dto'
+import { Vendor } from '@/features/vendor/dto.primitive'
 import prisma from '@/lib/prisma'
 
 export async function createVendor(name: string, description: string): Promise<Vendor> {

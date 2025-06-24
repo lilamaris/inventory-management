@@ -1,4 +1,4 @@
-import { User } from '@/features/user/user.dto'
+import { User } from '@/features/user/dto.primitive'
 import prisma from '@/lib/prisma'
 
 export async function getUser(id: string): Promise<User | null> {

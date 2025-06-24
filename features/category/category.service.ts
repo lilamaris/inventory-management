@@ -1,4 +1,4 @@
-import { Category } from '@/features/category/category.dto'
+import { Category } from '@/features/category/dto.primitive'
 import prisma from '@/lib/prisma'
 
 export async function createCategory(category: Category): Promise<Category> {
