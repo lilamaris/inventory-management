@@ -1,11 +1,11 @@
 import { z } from 'zod'
 
 import { Item, itemSchema } from '@/features/item/dto.primitive'
-import { PrimitiveWithInclude } from '@/lib/type'
+import { PrimitiveWithInclude, PrimitiveWithPartial } from '@/lib/type'
 
 import { categorySchema } from '@/features/category/dto.primitive'
 import { vendorSchema } from '@/features/vendor/dto.primitive'
-import { orderItemSchema } from '../order/dto.primitive'
+import { orderItemSchema } from '@/features/order/dto.composite'
 
 export const itemWithCategorySchema = itemSchema.extend({
     category: categorySchema,
@@ -30,3 +30,4 @@ interface IncludeMap {
 }
 
 export type ItemWith<Key extends (keyof IncludeMap)[]> = PrimitiveWithInclude<Item, IncludeMap, Key>
+export type ItemWithPartial<Key extends (keyof IncludeMap)[]> = PrimitiveWithPartial<Item, IncludeMap, Key>
