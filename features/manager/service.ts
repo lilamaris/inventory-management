@@ -66,3 +66,13 @@ export async function getManagersByVendorId(vendorId: string): Promise<ManagerWi
     })
     return managers
 }
+
+export async function getManagerByUserId(userId: string): Promise<ManagerWith<['vendor']> | null> {
+    const manager = await prisma.manager.findUnique({
+        where: { userId },
+        include: {
+            vendor: true,
+        },
+    })
+    return manager ?? null
+}
