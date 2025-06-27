@@ -1,7 +1,7 @@
 import { getCurrentSession } from '@/lib/server/session'
 import { redirect } from 'next/navigation'
 
-import { getOwnVendorByUserId } from '@/features/manager/service'
+import { getManagerByUserId } from '@/features/manager/service'
 import { getItemsByVendorId } from '@/features/item/service'
 import ItemTable from '@/features/item/components/item-table'
 
@@ -9,9 +9,9 @@ export default async function MyVendorItemsPage() {
     const { session, user } = await getCurrentSession()
     if (!session || !user) redirect('/console')
 
-    const vendor = await getOwnVendorByUserId(user.id)
-    if (!vendor) redirect('/console')
+    const manager = await getManagerByUserId(user.id)
+    if (!manager) redirect('/console')
 
-    const items = await getItemsByVendorId(vendor.id)
+    const items = await getItemsByVendorId(manager.vendor.id)
     return <ItemTable items={items} />
 }
