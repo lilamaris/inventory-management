@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { OrderStatus } from '@/generated/prisma'
+import { OrderStatus } from '@prisma/client'
 
 export const orderTransactionSchema = z.object({
     id: z.string(),

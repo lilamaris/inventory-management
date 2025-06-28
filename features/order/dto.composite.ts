@@ -8,7 +8,7 @@ import { userSchema } from '@/features/user/dto.primitive'
 import { vendorSchema } from '@/features/vendor/dto.primitive'
 import { orderTransactionSchema } from '@/features/orderTransaction/dto.primitive'
 
-import { OrderStatus } from '@/generated/prisma'
+import { OrderStatus } from '@prisma/client'
 
 export const orderItemSchema = z.object({
     id: z.string(),

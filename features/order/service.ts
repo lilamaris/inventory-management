@@ -1,4 +1,4 @@
-import { OrderStatus } from '@/generated/prisma'
+import { OrderStatus } from '@prisma/client'
 import prisma from '@/lib/prisma'
 
 import { Order } from '@/features/order/dto.primitive'

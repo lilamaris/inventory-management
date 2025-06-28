@@ -1,4 +1,4 @@
-import { OrderStatus as PrismaOrderStatus } from '@/generated/prisma'
+import { OrderStatus as PrismaOrderStatus } from '@prisma/client'
 import { Badge } from '@/components/ui/badge'
 import { BadgeAlert, BadgeCheck, BadgeInfo, BadgeX } from 'lucide-react'
 

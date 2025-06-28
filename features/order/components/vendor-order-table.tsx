@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { MoreHorizontal } from 'lucide-react'
 
-import { OrderStatus as PrismaOrderStatus } from '@/generated/prisma'
+import { OrderStatus as PrismaOrderStatus } from '@prisma/client'
 import { formatTime } from '@/lib/utils'
 
 import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table'

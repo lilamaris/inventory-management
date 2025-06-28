@@ -1,4 +1,4 @@
-import { OrderStatus } from '@/generated/prisma'
+import { OrderStatus } from '@prisma/client'
 
 export const orderStatusToLabel: Record<OrderStatus, string> = {
     [OrderStatus.IN_CART]: 'In Cart',

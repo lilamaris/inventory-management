@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Order } from '@/features/order/dto.primitive'
-import { OrderStatus } from '@/generated/prisma'
+import { OrderStatus } from '@prisma/client'
 import updateOrderStatus from '@/features/order/actions'
 
 export interface OrderFormFieldProps {
@@ -33,7 +33,8 @@ export default function OrderFormField(props: OrderFormFieldProps) {
                             <SelectItem value={OrderStatus.DELIVERED}>Delivered</SelectItem>
                         </SelectContent>
                     </Select>
-                    {state?.message && <p className="text-xs text-destructive">{state.message}</p>}{errors?.status && <p className="text-xs text-destructive">{errors.status}</p>}
+                    {state?.message && <p className="text-xs text-destructive">{state.message}</p>}
+                    {errors?.status && <p className="text-xs text-destructive">{errors.status}</p>}
                     {errors?.orderId && <p className="text-xs text-destructive">{errors.orderId}</p>}
                     {errors?.vendorId && <p className="text-xs text-destructive">{errors.vendorId}</p>}
                     <input type="hidden" name="orderId" value={defaultValue?.id} />
