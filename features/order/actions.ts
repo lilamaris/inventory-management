@@ -1,5 +1,6 @@
 'use server'
 
+import { OrderStatus } from '@/generated/prisma'
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
@@ -8,7 +9,8 @@ import { getCurrentSession } from '@/lib/server/session'
 
 import { UpdateOrderStatus, updateOrderStatusSchema } from '@/features/order/dto.composite'
 import { isManagerInVendor } from '@/features/manager/service'
-import { $createOrderTransaction } from '../orderTransaction/service'
+import { $createOrderTransaction } from '@/features/orderTransaction/service'
+import { getOrder } from '@/features/order/service'
 
 export default async function updateOrderStatus(state: UpdateOrderStatus, formData: FormData) {
     const { session, user } = await getCurrentSession()
@@ -26,17 +28,14 @@ export default async function updateOrderStatus(state: UpdateOrderStatus, formDa
 
     const { orderId, vendorId, status } = validatedFields.data
 
-    // before update, check user who update order is in vendor. if not, redirect to console
     if (!isManagerInVendor(user.id, vendorId)) redirect('/console')
 
-    try {
-        const order = await prisma.order.findUnique({
-            where: { id: orderId },
-        })
-        if (!order) throw new Error('Order not found')
-        if (order.vendorId !== vendorId) throw new Error('Order not found')
-        if (order.status === status) throw new Error('Can not update to same status')
+    const order = await getOrder(orderId)
+    if (!order) throw new Error('Order not found')
+    if (order.vendorId !== vendorId) throw new Error('Order not found')
+    if (order.status === status) throw new Error('Can not update to same status')
 
+    try {
         await prisma.$transaction(async (tx) => {
             if (!order) throw new Error('Order not found')
             if (order.vendorId !== vendorId) throw new Error('Order not found')
@@ -44,6 +43,24 @@ export default async function updateOrderStatus(state: UpdateOrderStatus, formDa
                 where: { id: orderId },
                 data: { status },
             })
+
+            // if status is delivered, we need to update vendor item quantity depending by order items quantity
+            if (status === OrderStatus.DELIVERED) {
+                const { orderItems } = order
+                await tx.item.updateMany({
+                    where: { id: { in: orderItems.map((item) => item.itemId) } },
+                    data: { quantity: { decrement: orderItems.reduce((acc, item) => acc + item.quantity, 0) } },
+                })
+            }
+
+            if (order.status === OrderStatus.DELIVERED && status !== OrderStatus.DELIVERED) {
+                const { orderItems } = order
+                await tx.item.updateMany({
+                    where: { id: { in: orderItems.map((item) => item.itemId) } },
+                    data: { quantity: { increment: orderItems.reduce((acc, item) => acc + item.quantity, 0) } },
+                })
+            }
+
             await $createOrderTransaction(tx)(orderId, order.status, status, user.id)
         })
     } catch (error) {

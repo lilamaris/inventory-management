@@ -4,51 +4,77 @@ import prisma from '@/lib/prisma'
 import { Order } from '@/features/order/dto.primitive'
 import { OrderWith } from '@/features/order/dto.composite'
 
-export async function getOrder(id: string): Promise<Order | null> {
+export async function getOrder(id: string): Promise<OrderWith<['orderItems']> | null> {
     const order = await prisma.order.findUnique({
         where: { id },
         include: {
-            orderItems: true,
+            orderItems: {
+                include: {
+                    item: true,
+                },
+            },
         },
     })
     return order
 }
 
-export async function getOrdersByUserId(userId: string): Promise<Order[]> {
+export async function getOrdersByUserId(userId: string): Promise<OrderWith<['orderItems']>[]> {
     const orders = await prisma.order.findMany({
         where: { orderByUserId: userId },
         include: {
-            orderItems: true,
+            orderItems: {
+                include: {
+                    item: true,
+                },
+            },
         },
     })
     return orders
 }
 
-export async function getOrdersByUserIdAndStatus(userId: string, status: OrderStatus): Promise<Order[]> {
+export async function getOrdersByUserIdAndStatus(
+    userId: string,
+    status: OrderStatus,
+): Promise<OrderWith<['orderItems']>[]> {
     const orders = await prisma.order.findMany({
         where: { orderByUserId: userId, status },
         include: {
-            orderItems: true,
+            orderItems: {
+                include: {
+                    item: true,
+                },
+            },
         },
     })
     return orders
 }
 
-export async function getOrdersByVendorId(vendorId: string): Promise<Order[]> {
+export async function getOrdersByVendorId(vendorId: string): Promise<OrderWith<['orderItems']>[]> {
     const orders = await prisma.order.findMany({
         where: { vendorId },
         include: {
-            orderItems: true,
+            orderItems: {
+                include: {
+                    item: true,
+                },
+            },
         },
     })
     return orders
 }
 
-export async function getOrdersByVendorIdAndStatus(vendorId: string, status: OrderStatus): Promise<Order[]> {
+export async function getOrdersByVendorIdAndStatus(
+    vendorId: string,
+    status: OrderStatus,
+): Promise<OrderWith<['orderItems']>[]> {
     const orders = await prisma.order.findMany({
         where: { vendorId, status },
         include: {
-            orderItems: true,
+            orderItems: {
+                include: {
+                    item: true,
+                },
+            },
         },
     })
     return orders
