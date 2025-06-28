@@ -9,18 +9,21 @@ export interface UseBreadcrumbsOptions {
 
 export function useBreadcrumbs(options?: UseBreadcrumbsOptions): RouteNode[] {
     const pathname = usePathname()
-    const { rootPath = '/' } = options ?? {}
-    const crumbs: RouteNode[] = [{ id: 'home', label: 'Home', href: rootPath }]
+    const { rootPath = '/console' } = options ?? {}
     const segments = pathname.split('/').filter(Boolean).slice(1)
 
     let candidate: RouteNode[] = Object.values(routeTree)
-    for (const segment of segments) {
-        const found = candidate.find((node) => node.id === segment)
-        if (!found) break
+    const breadcrumbs = segments.reduce<RouteNode[]>(
+        (crumbs, segment) => {
+            const found = candidate.find((node) => node.id === segment)
+            if (!found) return crumbs
 
-        crumbs.push(found)
-        candidate = found.subRoutes ?? []
-    }
+            candidate = found.subRoutes ?? []
 
-    return crumbs
+            return [...crumbs, found]
+        },
+        [{ id: 'home', label: 'Home', href: rootPath }],
+    )
+
+    return breadcrumbs
 }
