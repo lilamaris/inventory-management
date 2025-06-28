@@ -19,12 +19,12 @@ import { Button } from '@/components/ui/button'
 function subrouteBreadcrumb(breadcrumb: RouteNode) {
     return (
         <DropdownMenu>
-            <Button variant="ghost" size="sm" asChild>
-                <DropdownMenuTrigger className="group/dropdown-menu">
+            <DropdownMenuTrigger className="group/dropdown-menu" asChild>
+                <Button variant="ghost" size="sm" className="h-fit">
                     {breadcrumb.label}
                     <ChevronDown className="size-4 transition-transform group-data-[state=open]/dropdown-menu:rotate-180" />
-                </DropdownMenuTrigger>
-            </Button>
+                </Button>
+            </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-background" align="start">
                 {breadcrumb.subRoutes?.map((subRoute) => (
                     <DropdownMenuItem key={subRoute.id} asChild>
@@ -56,7 +56,7 @@ export default function HeaderBreadcrumb() {
 
     return (
         <Breadcrumb>
-            <BreadcrumbList>
+            <BreadcrumbList className="flex items-center py-2">
                 {breadcrumbs.map((breadcrumb, index) => (
                     <Fragment key={breadcrumb.id}>
                         <BreadcrumbItem>

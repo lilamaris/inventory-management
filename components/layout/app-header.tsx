@@ -10,7 +10,7 @@ export default function AppHeader({ className, ...props }: React.HTMLAttributes<
             className={cn('flex h-(--header-height) overflow-hidden shrink-0 items-center gap-2 border-b', className)}
             {...props}
         >
-            <div className="flex w-full items-center px-4 py-1">
+            <div className="flex w-full items-center px-4 h-10">
                 <SidebarTrigger className="-ml-1" />
                 <Separator orientation="vertical" className="mx-2 data-[orientation=vertical]:h-4" />
                 <div className="flex-1 truncate">

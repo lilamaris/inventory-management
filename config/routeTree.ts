@@ -25,7 +25,7 @@ export const routeTree: Record<string, RouteNode> = {
         href: '/order',
     },
     myVendor: {
-        id: 'myVendor',
+        id: 'my-vendor',
         label: 'My Vendor',
         icon: Shield,
         subRoutes: [
