@@ -65,6 +65,8 @@ function DropdownMenuItem({
     )
 }
 
+DropdownMenuItem.defaultProps = { inset: false, variant: 'default' }
+
 function DropdownMenuCheckboxItem({
     className,
     children,
@@ -136,6 +138,8 @@ function DropdownMenuLabel({
     )
 }
 
+DropdownMenuLabel.defaultProps = { inset: false }
+
 function DropdownMenuSeparator({ className, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Separator>) {
     return (
         <DropdownMenuPrimitive.Separator
@@ -183,6 +187,8 @@ function DropdownMenuSubTrigger({
         </DropdownMenuPrimitive.SubTrigger>
     )
 }
+
+DropdownMenuSubTrigger.defaultProps = { inset: false }
 
 function DropdownMenuSubContent({
     className,
