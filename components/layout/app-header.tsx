@@ -1,4 +1,4 @@
-import { Separator } from '@/components/ui/separator'
+import Separator from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import AppThemeController from '@/components/layout/app-theme-controller'
 import HeaderBreadcrumb from '@/components/layout/header-breadcrumb'

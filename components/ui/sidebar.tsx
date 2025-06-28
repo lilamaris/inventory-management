@@ -8,8 +8,8 @@ import { PanelLeftIcon } from 'lucide-react'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Separator } from '@/components/ui/separator'
+import Input from '@/components/ui/input'
+import Separator from '@/components/ui/separator'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
@@ -21,7 +21,7 @@ const SIDEBAR_WIDTH_MOBILE = '18rem'
 const SIDEBAR_WIDTH_ICON = '3rem'
 const SIDEBAR_KEYBOARD_SHORTCUT = 'b'
 
-type SidebarContextProps = {
+interface SidebarContextProps {
     state: 'expanded' | 'collapsed'
     open: boolean
     setOpen: (open: boolean) => void
@@ -60,15 +60,15 @@ function SidebarProvider({
 
     // This is the internal state of the sidebar.
     // We use openProp and setOpenProp for control from outside the component.
-    const [_open, _setOpen] = React.useState(defaultOpen)
-    const open = openProp ?? _open
+    const [openInternal, setOpenInternal] = React.useState(defaultOpen)
+    const open = openProp ?? openInternal
     const setOpen = React.useCallback(
         (value: boolean | ((value: boolean) => boolean)) => {
             const openState = typeof value === 'function' ? value(open) : value
             if (setOpenProp) {
                 setOpenProp(openState)
             } else {
-                _setOpen(openState)
+                setOpenInternal(openState)
             }
 
             // This sets the cookie to keep the sidebar state.
@@ -78,9 +78,10 @@ function SidebarProvider({
     )
 
     // Helper to toggle the sidebar.
-    const toggleSidebar = React.useCallback(() => {
-        return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open)
-    }, [isMobile, setOpen, setOpenMobile])
+    const toggleSidebar = React.useCallback(
+        () => (isMobile ? setOpenMobile((openState) => !openState) : setOpen((openState) => !openState)),
+        [isMobile, setOpen, setOpenMobile],
+    )
 
     // Adds a keyboard shortcut to toggle the sidebar.
     React.useEffect(() => {
@@ -136,6 +137,8 @@ function SidebarProvider({
         </SidebarContext.Provider>
     )
 }
+
+SidebarProvider.defaultProps = { defaultOpen: true, open: undefined, onOpenChange: undefined }
 
 function Sidebar({
     side = 'left',
@@ -236,6 +239,8 @@ function Sidebar({
     )
 }
 
+Sidebar.defaultProps = { side: 'left', variant: 'sidebar', collapsible: 'offcanvas' }
+
 function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<typeof Button>) {
     const { toggleSidebar } = useSidebar()
 
@@ -263,6 +268,7 @@ function SidebarRail({ className, ...props }: React.ComponentProps<'button'>) {
 
     return (
         <button
+            type="button"
             data-sidebar="rail"
             data-slot="sidebar-rail"
             aria-label="Toggle Sidebar"
@@ -387,6 +393,8 @@ function SidebarGroupLabel({
     )
 }
 
+SidebarGroupLabel.defaultProps = { asChild: false }
+
 function SidebarGroupAction({
     className,
     asChild = false,
@@ -409,6 +417,8 @@ function SidebarGroupAction({
         />
     )
 }
+
+SidebarGroupAction.defaultProps = { asChild: false }
 
 function SidebarGroupContent({ className, ...props }: React.ComponentProps<'div'>) {
     return (
@@ -479,6 +489,7 @@ function SidebarMenuButton({
     tooltip?: string | React.ComponentProps<typeof TooltipContent>
 } & VariantProps<typeof sidebarMenuButtonVariants>) {
     const Comp = asChild ? Slot : 'button'
+    const tooltipProps = typeof tooltip === 'string' ? { children: tooltip } : tooltip
     const { isMobile, state } = useSidebar()
 
     const button = (
@@ -496,19 +507,15 @@ function SidebarMenuButton({
         return button
     }
 
-    if (typeof tooltip === 'string') {
-        tooltip = {
-            children: tooltip,
-        }
-    }
-
     return (
         <Tooltip>
             <TooltipTrigger asChild>{button}</TooltipTrigger>
-            <TooltipContent side="right" align="center" hidden={state !== 'collapsed' || isMobile} {...tooltip} />
+            <TooltipContent side="right" align="center" hidden={state !== 'collapsed' || isMobile} {...tooltipProps} />
         </Tooltip>
     )
 }
+
+SidebarMenuButton.defaultProps = { asChild: false, isActive: false, tooltip: undefined }
 
 function SidebarMenuAction({
     className,
@@ -542,6 +549,8 @@ function SidebarMenuAction({
     )
 }
 
+SidebarMenuAction.defaultProps = { asChild: false, showOnHover: false }
+
 function SidebarMenuBadge({ className, ...props }: React.ComponentProps<'div'>) {
     return (
         <div
@@ -569,9 +578,7 @@ function SidebarMenuSkeleton({
     showIcon?: boolean
 }) {
     // Random width between 50 to 90%.
-    const width = React.useMemo(() => {
-        return `${Math.floor(Math.random() * 40) + 50}%`
-    }, [])
+    const width = React.useMemo(() => `${Math.floor(Math.random() * 40) + 50}%`, [])
 
     return (
         <div
@@ -593,6 +600,8 @@ function SidebarMenuSkeleton({
         </div>
     )
 }
+
+SidebarMenuSkeleton.defaultProps = { showIcon: false }
 
 function SidebarMenuSub({ className, ...props }: React.ComponentProps<'ul'>) {
     return (
@@ -651,6 +660,8 @@ function SidebarMenuSubButton({
         />
     )
 }
+
+SidebarMenuSubButton.defaultProps = { asChild: false, size: 'md', isActive: false }
 
 export {
     Sidebar,

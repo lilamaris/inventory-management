@@ -20,7 +20,6 @@ import { getCurrentSession } from '@/lib/server/session'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
 
 export default async function Page() {
     const { session, user } = await getCurrentSession()

@@ -69,6 +69,8 @@ function DialogContent({
     )
 }
 
+DialogContent.defaultProps = { showCloseButton: true }
+
 function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
     return (
         <div

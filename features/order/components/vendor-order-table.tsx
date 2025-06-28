@@ -8,7 +8,7 @@ import { formatTime } from '@/lib/utils'
 
 import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Checkbox } from '@/components/ui/checkbox'
+import Checkbox from '@/components/ui/checkbox'
 
 import DataTable from '@/components/data-table'
 import DataTableColumnHeader from '@/components/data-table-column.header'

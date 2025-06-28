@@ -14,42 +14,42 @@ export interface RouteNode extends RouteMeta {
 export const routeTree: Record<string, RouteNode> = {
     vendors: {
         id: 'vendors',
-        label: 'Vendors',
+        label: '판매자',
         icon: Store,
         href: '/vendors',
     },
     order: {
         id: 'order',
-        label: 'Order',
+        label: '주문',
         icon: Clipboard,
         href: '/order',
     },
     myVendor: {
         id: 'my-vendor',
-        label: 'My Vendor',
+        label: '내 판매점',
         icon: Shield,
         subRoutes: [
             {
                 id: 'orders',
-                label: 'Orders',
+                label: '주문 관리',
                 icon: Clipboard,
                 href: '/my-vendor/orders',
             },
             {
                 id: 'items',
-                label: 'Items',
+                label: '상품 관리',
                 icon: Store,
                 href: '/my-vendor/items',
             },
             {
                 id: 'managers',
-                label: 'Managers',
+                label: '직원 관리',
                 icon: Users,
                 href: '/my-vendor/managers',
             },
             {
                 id: 'fulfillment',
-                label: 'Fulfillment',
+                label: '주문 처리 현황',
                 icon: Truck,
                 href: '/my-vendor/fulfillment',
             },

@@ -1,13 +1,11 @@
 'use client'
 
-import * as React from 'react'
+import { ColumnDef, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table'
 import { ArrowRight } from 'lucide-react'
 
-import { OrderStatus as PrismaOrderStatus } from '@/generated/prisma'
 import { formatTime } from '@/lib/utils'
 
-import { ColumnDef, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table'
-import { Checkbox } from '@/components/ui/checkbox'
+import Checkbox from '@/components/ui/checkbox'
 
 import DataTable from '@/components/data-table'
 import DataTableColumnHeader from '@/components/data-table-column.header'

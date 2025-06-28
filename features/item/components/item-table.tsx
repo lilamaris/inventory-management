@@ -6,7 +6,7 @@ import { MoreHorizontal, Edit, Trash2, Eye } from 'lucide-react'
 import { formatTime } from '@/lib/utils'
 
 import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import { Checkbox } from '@/components/ui/checkbox'
+import Checkbox from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import {
     DropdownMenu,

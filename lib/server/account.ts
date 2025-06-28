@@ -1,4 +1,4 @@
-import { Account, AuthType } from '@/generated/prisma'
+import { Account, AuthType } from '@prisma/client'
 
 import prisma from '@/lib/prisma'
 import { hashPassword } from '@/lib/server/password'

@@ -12,7 +12,7 @@ import {
     SidebarMenuSub,
 } from '@/components/ui/sidebar'
 import Link from 'next/link'
-import { ChevronRight, ClipboardList, GalleryVerticalEnd, LogOut, Minus, Plus, Store } from 'lucide-react'
+import { ChevronRight, GalleryVerticalEnd, Minus, Plus } from 'lucide-react'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@radix-ui/react-collapsible'
 import { cn } from '@/lib/utils'
 
@@ -20,9 +20,8 @@ import { routeTree, type RouteNode } from '@/config/routeTree'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { appMeta } from '@/config/app'
 import { getCurrentSession } from '@/lib/server/session'
-import Image from 'next/image'
 import { redirect } from 'next/navigation'
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 function renderCollapsibleRoute(route: RouteNode) {
     if (route.subRoutes) {

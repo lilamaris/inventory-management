@@ -1,7 +1,7 @@
 import type { OAuth2Tokens } from 'arctic'
 import { cookies } from 'next/headers'
 
-import { AuthType } from '@/generated/prisma/client'
+import { AuthType } from '@prisma/client'
 import { createAccount, getAccountByProviderId } from '@/lib/server/account'
 import { createSession, generateSessionToken } from '@/lib/server/session'
 import { createUser, getUserByEmail } from '@/lib/server/user'

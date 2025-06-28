@@ -1,5 +1,5 @@
 import { OrderTransaction } from '@/features/orderTransaction/dto.primitive'
-import { OrderStatus, Prisma } from '@/generated/prisma'
+import { OrderStatus, Prisma } from '@prisma/client'
 import prisma from '@/lib/prisma'
 import { OrderTransactionWith } from './dto.composite'
 

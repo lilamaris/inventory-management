@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
-import { AuthType } from '@/generated/prisma'
+import { AuthType } from '@prisma/client'
 
 import { createAccount, type CreateAccountParams, isUserHasAuthType } from '@/lib/server/account'
 import { createSession, generateSessionToken } from '@/lib/server/session'
