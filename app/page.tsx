@@ -29,7 +29,7 @@ export default async function Page() {
                 <div className="absolute inset-0 bg-grid-pattern opacity-5" />
                 <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
                     <div className="mb-8">
-                        <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-6">
+                        <h1 className="text-5xl py-4 md:text-7xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-6">
                             Inventory Management
                         </h1>
                         <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-2xl mx-auto">
@@ -52,7 +52,7 @@ export default async function Page() {
                                         </Button>
                                     </Link>
                                     <Link href="/auth/signup">
-                                        <Button size="lg" variant="outline" className="text-lg px-8 py-6">
+                                        <Button size="lg" className="text-lg px-8 py-6">
                                             회원가입
                                         </Button>
                                     </Link>
