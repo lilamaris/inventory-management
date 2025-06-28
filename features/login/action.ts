@@ -11,7 +11,7 @@ import { loginSchema } from '@/features/login/type'
 import { verifyPassword } from '@/lib/server/password'
 import { createSession, generateSessionToken } from '@/lib/server/session'
 
-const ERROR_MESSAGE = 'Invalid Credentials'
+const ERROR_MESSAGE = '입력 정보가 올바르지 않습니다. 다시 확인해주세요.'
 
 export default async function loginAction(state: ActionState<typeof loginSchema>, formData: FormData) {
     const form = Object.fromEntries(formData)

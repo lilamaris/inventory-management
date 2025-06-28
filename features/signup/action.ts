@@ -19,7 +19,7 @@ export default async function signupAction(state: ActionState<typeof signupSchem
     if (!validatedFields.success) {
         return {
             errors: validatedFields.error.flatten().fieldErrors,
-            message: 'Invalid fields. Please check your inputs.',
+            message: '입력 항목이 올바르지 않습니다. 다시 확인해주세요.',
         }
     }
 
@@ -29,9 +29,7 @@ export default async function signupAction(state: ActionState<typeof signupSchem
 
     if (await isUserHasAuthType(AuthType.CREDENTIALS, user.id)) {
         return {
-            errors: {
-                email: ['Email already in use'],
-            },
+            message: '이미 사용 중인 이메일입니다.',
         }
     }
 

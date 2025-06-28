@@ -4,23 +4,23 @@ import { ActionState } from '@/lib/type'
 
 export const signupSchema = z
     .object({
-        email: z.string().email({ message: 'Invalid email address' }),
+        email: z.string().email({ message: '이메일 형식이 올바르지 않습니다.' }),
         name: z
             .string()
-            .min(1, { message: 'Name is required' })
-            .max(20, { message: 'Name must be less than 20 characters' }),
+            .min(1, { message: '이름은 필수 입력 항목입니다.' })
+            .max(20, { message: '이름은 20자 이하여야 합니다.' }),
         password: z
             .string()
-            .min(8)
-            .regex(/[A-Z]/, { message: 'Must contain at least one uppercase letter' })
-            .regex(/[a-z]/, { message: 'Must contain at least one lowercase letter' })
-            .regex(/[0-9]/, { message: 'Must contain at least one number' })
-            .regex(/[!@#$%^&*]/, { message: 'Must contain at least one special character' }),
-        confirmPassword: z.string().min(1, { message: 'Confirm password is required' }),
+            .min(8, { message: '비밀번호는 8자 이상이어야 합니다.' })
+            .regex(/[A-Z]/, { message: '대문자를 포함해야 합니다.' })
+            .regex(/[a-z]/, { message: '소문자를 포함해야 합니다.' })
+            .regex(/[0-9]/, { message: '숫자를 포함해야 합니다.' })
+            .regex(/[!@#$%^&*]/, { message: '특수문자를 포함해야 합니다.' }),
+        confirmPassword: z.string().min(1, { message: '비밀번호 확인은 필수 입력 항목입니다.' }),
     })
     .refine((data) => data.password === data.confirmPassword, {
         path: ['confirmPassword'],
-        message: 'Passwords do not match',
+        message: '비밀번호가 일치하지 않습니다.',
     })
 
 export type SignupState = ActionState<typeof signupSchema>
