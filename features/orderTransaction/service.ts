@@ -41,6 +41,9 @@ export async function getOrderTransactionsByVendorId(
             },
             updatedByUser: true,
         },
+        orderBy: {
+            transactionAt: 'desc',
+        },
     })
     return orderTransactions
 }
