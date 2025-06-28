@@ -1,6 +1,7 @@
 import { OrderTransaction } from '@/features/orderTransaction/dto.primitive'
 import { OrderStatus, Prisma } from '@/generated/prisma'
 import prisma from '@/lib/prisma'
+import { OrderTransactionWith } from './dto.composite'
 
 export async function getOrderTransaction(id: string): Promise<OrderTransaction | null> {
     const orderTransaction = await prisma.orderTransaction.findUnique({
@@ -16,9 +17,30 @@ export async function getOrderTransactionsByOrderId(orderId: string): Promise<Or
     return orderTransactions
 }
 
-export async function getOrderTransactionByManagerId(managerId: string): Promise<OrderTransaction[]> {
+export async function getOrderTransactionsByManagerId(managerId: string): Promise<OrderTransaction[]> {
     const orderTransactions = await prisma.orderTransaction.findMany({
         where: { updatedByUserId: managerId },
+    })
+    return orderTransactions
+}
+
+export async function getOrderTransactionsByVendorId(
+    vendorId: string,
+): Promise<OrderTransactionWith<['order' | 'updatedByUser']>[]> {
+    const orderTransactions = await prisma.orderTransaction.findMany({
+        where: { order: { vendorId } },
+        include: {
+            order: {
+                include: {
+                    orderItems: {
+                        include: {
+                            item: true,
+                        },
+                    },
+                },
+            },
+            updatedByUser: true,
+        },
     })
     return orderTransactions
 }
