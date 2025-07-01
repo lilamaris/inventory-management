@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 export default function VendorAvatar({ vendor }: { vendor: Vendor }) {
     return (
-        <Link href={`/vendor/${vendor.id}`} className="group flex items-center gap-2">
+        <Link href={`/console/vendors/${vendor.id}`} className="group flex items-center gap-2">
             <Avatar>
                 <AvatarImage src={vendor.thumbnailUrl ?? undefined} />
                 <AvatarFallback>{vendor.name.slice(0, 2)}</AvatarFallback>
