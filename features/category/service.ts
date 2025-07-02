@@ -24,3 +24,11 @@ export async function deleteCategory(id: string): Promise<Category> {
     })
     return deletedCategory
 }
+
+export async function getCategoriesByVendorId(vendorId: string): Promise<Category[]> {
+    const categories = await prisma.category.findMany({
+        where: { vendorId },
+    })
+
+    return categories
+}

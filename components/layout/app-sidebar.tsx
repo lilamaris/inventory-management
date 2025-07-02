@@ -143,7 +143,7 @@ export default async function AppSidebar({ ...props }: React.ComponentProps<type
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href="/auth/profile">
+                            <Link href="/console/profile">
                                 <Avatar>
                                     <AvatarImage src={user.avatarUrl ?? ''} alt="Avatar" />
                                     <AvatarFallback>{user.name.slice(0, 2)}</AvatarFallback>

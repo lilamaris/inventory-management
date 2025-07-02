@@ -1,5 +1,6 @@
 import prisma from '@/lib/prisma'
 import { Role } from '@prisma/client'
+import { generateSessionToken } from './session'
 
 export interface User {
     id: string
@@ -16,11 +17,13 @@ export async function createUser(
     avatarUrl?: string,
     defaultRole: Role = Role.VIEWER,
 ): Promise<User> {
+    const secretAccessToken = generateSessionToken()
     const user = await prisma.user.create({
         data: {
             email,
             name,
             avatarUrl,
+            secretAccessToken,
             roles: {
                 create: { role: defaultRole },
             },
