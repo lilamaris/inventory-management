@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import Separator from '@/components/ui/separator'
 
 export interface VendorPageProps {
-    params: { vendorId: string }
+    params: Promise<{ vendorId: string }>
 }
 
 export default async function VendorPage({ params }: VendorPageProps) {

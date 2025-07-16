@@ -33,10 +33,10 @@ export default async function MyVendorItemsPage() {
                     <CardContent>{categories.length}</CardContent>
                 </Card>
                 <Card className="flex-1">
-                    <CardContent></CardContent>
+                    <CardContent />
                 </Card>
                 <Card className="flex-1">
-                    <CardContent></CardContent>
+                    <CardContent />
                 </Card>
             </div>
             <Card>
